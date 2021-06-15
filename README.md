@@ -9,7 +9,7 @@ Slack app Hometokuの開発
 
 ### パッケージのインストールした時
 1. `(.venv)$ pip install xxx(インストールするパッケージ)`
-2. `(.venv)$ pip freexe > requirements.txt`
+2. `(.venv)$ pip freeze > requirements.txt`
 3. `(.venv)$ git add .`からいつものpushまで
 
 ### 他の人のものを引っ張ってくる時
