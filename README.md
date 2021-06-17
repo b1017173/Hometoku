@@ -28,3 +28,16 @@ Slack app Hometokuの開発
 4. `$ printenv PATH`で`/usr/local/bin`にPATHが通っていることを確認
 5. `$ mv ngrok /usr/local/bin/`
 6. `$ ngrok -v`でバージョンが出ればおk
+
+## テスト環境の立て方
+1. mian.pyを動かす → `Bolt is running!`的なのが出てればおk
+2. ngrokを動かす
+    1. ngrok環境があることを確認する
+    2. `$ ngrok http 3000`
+    3. `Forwarding      https://a10dc1f0b796.ngrok.io -> http://localhost:`みたいなとこのhttpsリンクをコピー
+3. [Slack app の設定画面](https://api.slack.com/apps/A0252JRUBU2/general?)を開く
+4. Event Subscriptionsに飛び，トグルをオンにする
+5. URLフォームに`コピーしたURL/slack/events`と入力 → 失敗してたら再起動とかしてみる
+6. 何か設定を変えるならここで変える
+7. 変えた場合はOAuth & PermissionsからReinstall in Workspaceでリインストールする
+8. Slack上とlogで動作確認開始！
