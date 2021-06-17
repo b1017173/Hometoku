@@ -38,6 +38,7 @@ Slack app Hometokuの開発
 3. [Slack app の設定画面](https://api.slack.com/apps/A0252JRUBU2/general?)を開く
 4. Event Subscriptionsに飛び，トグルをオンにする
 5. URLフォームに`コピーしたURL/slack/events`と入力 → 失敗してたら再起動とかしてみる
-6. 何か設定を変えるならここで変える
-7. 変えた場合はOAuth & PermissionsからReinstall in Workspaceでリインストールする
-8. Slack上とlogで動作確認開始！
+6. Interactivity & ShortcutsのURLも同じものに更新する
+7. 何か設定を変えるならここで変える
+8. 変えた場合はOAuth & PermissionsからReinstall in Workspaceでリインストールする
+9. Slack上とlogで動作確認開始！
