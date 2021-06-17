@@ -1,0 +1,17 @@
+{
+    "homePeople":{
+        "multi_users_select-action": {
+            "type": "multi_users_select",
+            "selected_users": [
+                "User1",
+                "User2"
+            ]
+        }
+    },
+    "homeMove":{
+        "plain_text_input-action": {
+            "type": "plain_text_input",
+            "value": "がんばれ！！！！"
+        }
+    }
+}

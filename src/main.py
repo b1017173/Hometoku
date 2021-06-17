@@ -1,17 +1,22 @@
 import os
 # Use the package we installed
 from slack_bolt import App
+from sendJson import SendJson  #  SendJsonClassをインポート
 
 # Initializes your app with your bot token and signing secret
+'''
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
-
+'''
 # Add functionality here
 # @app.event("app_home_opened") etc
 
 
 # Start your app
 if __name__ == "__main__":
-    app.start(port=int(os.environ.get("PORT", 3000)))
+   # app.start(port=int(os.environ.get("PORT", 3000)))
+   x = SendJson()
+   path = 'data/test.json'
+   x.make_json_file(path)
