@@ -15,3 +15,8 @@ Slack app Hometokuの開発
 ### 他の人のものを引っ張ってくる時
 1. `(.venv)$ git pull`
 2. `(.venv)$ pip install -r requirements.txt`
+
+## Tokenの管理
+1. Slackの「たいせつなもの」チャンネルでTokenを確認．以下のコマンドを置き換えて打ち込む．
+2. `export SLACK_BOT_TOKEN=xoxb-your-token`
+3. `export SLACK_SIGNING_SECRET=your-signing-secret`
