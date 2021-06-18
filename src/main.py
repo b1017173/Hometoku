@@ -1,7 +1,6 @@
 import os
 # Use the package we installed
 from slack_bolt import App
-import app_server.shortcut as sc
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -9,12 +8,8 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 
-# 'shortcut_homeru' という callback_id のショートカットをリッスン
-@app.shortcut("shortcut_homeru")
-def open_modal(ack, shortcut, client):
-    # リクエストを受け付け
-    ack()
-    sc.view_modal_from_shortcut(client, shortcut)
+# Add functionality here
+# @app.event("app_home_opened") etc
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
