@@ -1,15 +1,15 @@
 {
 	"blocks": [
 		{
-			"type": "divider"
-		},
-		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
 				"text": "ほめたい速報:thumbsup:",
 				"emoji": true
 			}
+		},
+		{
+			"type": "divider"
 		},
 		{
 			"type": "section",
