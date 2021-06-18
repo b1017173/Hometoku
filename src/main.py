@@ -1,7 +1,7 @@
 import os
 # Use the package we installed
 from slack_bolt import App
-import app_server.shortcut as sc
+import app_server.modal as md
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -14,11 +14,18 @@ app = App(
 def open_modal(ack, shortcut, client):
     # リクエストを受け付け
     ack()
-    sc.view_modal_from_shortcut(client, shortcut)
+    md.view_modal_from_shortcut(client, shortcut)
+
+# 'prise_countup' アクションをリッスン(褒めたい度の更新)
+@app.action("prise_countup")
+def countup_prise(ack, body, client):
+    # リクエストを受け付け
+    ack()
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
 def handle_submission(ack, body, client, view, logger):
+    # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeoples"]  # 褒めたい人・チャンネル
