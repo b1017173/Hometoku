@@ -9,31 +9,14 @@
 			}
 		},
 		{
-			"type": "divider"
-		},
-		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": " :crown: |  *ホーメル賞* | :crown:"
-			}
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "いつも頑張っている\n@ keita Takahashi\n\n一生懸命な\n@ Kai Moriuchi"
+				"text": "いつも頑張っている@ keita Takahashiさん@ Kai Moriuchiさん"
 			}
 		},
 		{
 			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": ":newspaper: |   *ホメッセージ*  | :newspaper: "
-			}
 		},
 		{
 			"type": "section",
@@ -44,6 +27,30 @@
 		},
 		{
 			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":clap:ほめクラップ:clap:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap::clap:"
+			}
+		},
+		{
+			"type": "image",
+			"title": {
+				"type": "plain_text",
+				"text": "homehome",
+				"emoji": true
+			},
+			"image_url": "https://tenor.com/bfiRs.gif",
+			"alt_text": "marg"
 		}
 	]
 }
