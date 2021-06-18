@@ -61,6 +61,7 @@ def view_modal_from_shortcut(client, shortcut):
                 "elements": [
                     {
                         "type": "button",
+                        "action_id": "prise_countup",
                         "text": {
                             "type": "plain_text",
                             "text": "褒めたい度",
@@ -71,11 +72,11 @@ def view_modal_from_shortcut(client, shortcut):
             },
             {
                 "type": "context",
-			    "block_id": "prize_counter",
+			    "block_id": "prise_counter",
 			    "elements": [
 				    {
                         "type": "mrkdwn",
-                        "text": ":clap: :clap::clap::clap::clap::clap::clap::clap: "
+                        "text": ":clap:"
                     }
                 ]
             }
