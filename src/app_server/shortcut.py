@@ -3,63 +3,82 @@ def view_modal_from_shortcut(client, shortcut):
     client.views_open(
         trigger_id = shortcut["trigger_id"],
         view = {
-            "title": {
-                "type": "plain_text",
-                "text": "Hometoku",
+        "callback_id": "modal_homeru",
+        "title": {
+            "type": "plain_text",
+            "text": "Hometoku",
+            "emoji": True
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Submit",
+            "emoji": True
+        },
+        "type": "modal",
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": True
+        },
+        "blocks": [
+            {
+                "type": "divider"
             },
-            "submit": {
-                "type": "plain_text",
-                "text": "Submit",
-            },
-            "type": "modal",
-            "close": {
-                "type": "plain_text",
-                "text": "Cancel",
-            },
-            "blocks": [
-                {
-                    "type": "divider"
-                },
-                {
-                    "block_id": "homePeople",
-                    "type": "input",
-                    "element": {
-                        "type": "multi_users_select",
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "Select users",
-                        },
-                        "action_id": "multi_users_select-action"
-                    },
-                    "label": {
+            {
+                "block_id": "homepeople",
+                "type": "input",
+                "element": {
+                    "type": "multi_users_select",
+                    "placeholder": {
                         "type": "plain_text",
-                        "text": "褒めたい人",
-                    }
-                },
-                {
-                    "block_id": "homeMove",
-                    "type": "input",
-                    "element": {
-                        "type": "plain_text_input",
-                        "action_id": "plain_text_input-action"
+                        "text": "Select users",
+                        "emoji": True
                     },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "褒めたいこと",
-                    }
+                    "action_id": "select_homepeople"
                 },
-                {
-                    "type": "actions",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "褒めたい度",
-                            }
-                        }
-                    ]
+                "label": {
+                    "type": "plain_text",
+                    "text": "褒めたい人",
+                    "emoji": True
                 }
-            ]
+            },
+            {
+                "block_id": "homemove",
+                "type": "input",
+                "element": {
+                    "type": "plain_text_input",
+                    "multiline": True,
+                    "action_id": "input_homemove"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "褒めたいこと",
+                    "emoji": True
+                }
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "褒めたい度",
+                            "emoji": True
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "context",
+			    "block_id": "prize_counter",
+			    "elements": [
+				    {
+                        "type": "mrkdwn",
+                        "text": ":clap: :clap::clap::clap::clap::clap::clap::clap: "
+                    }
+                ]
+            }
+        ]
         }
     )
