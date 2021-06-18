@@ -91,8 +91,11 @@ def view_modal_from_shortcut(client, shortcut):
     )
 
 # 褒めたい度が上がった時にモーダルを更新する関数
-def update_modal_from_countup(body, client, view):
-    _clap = view["state"]["values"]["prise_counter"][""]
+def update_modal_from_countup(body, client):
+    # _clap = view["state"]["values"]["prise_counter"]
+    # _clap = body["view"]["state"]["values"]["prise_counter"]
+    _clap = body["view"]["blocks"][4]["elements"][0]["text"]
+    _clap += ":clap:"
     client.views_update(
         view_id = body["view"]["id"],
         hash = body["view"]["hash"],
