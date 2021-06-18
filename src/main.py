@@ -18,9 +18,10 @@ def open_modal(ack, shortcut, client):
 
 # 'prise_countup' アクションをリッスン(褒めたい度の更新)
 @app.action("prise_countup")
-def countup_prise(ack, body, client):
+def countup_prise(ack, body, client, view):
     # リクエストを受け付け
     ack()
+    md.update_modal_from_countup(body, client, view)
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")

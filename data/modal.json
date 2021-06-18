@@ -1,0 +1,73 @@
+{
+    "title": {
+		"type": "plain_text",
+		"text": "Hometoku",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	},
+	"type": "modal",
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"attachments": [
+		{
+			"callback_id": "modal",
+			"blocks": [
+				{
+					"type": "divider"
+				},
+				{
+					"block_id": "homepeople",
+					"type": "input",
+					"element": {
+						"type": "multi_users_select",
+						"placeholder": {
+							"type": "plain_text",
+							"text": "Select users",
+							"emoji": true
+						},
+						"action_id": "select_homepeople"
+					},
+					"label": {
+						"type": "plain_text",
+						"text": "褒めたい人",
+						"emoji": true
+					}
+				},
+				{
+					"block_id": "homemove",
+					"type": "input",
+					"element": {
+						"type": "plain_text_input",
+						"multiline": true,
+						"action_id": "input_homemove"
+					},
+					"label": {
+						"type": "plain_text",
+						"text": "褒めたいこと",
+						"emoji": true
+					}
+				},
+				{
+					"type": "actions",
+					"elements": [
+						{
+							"type": "button",
+							"text": {
+								"type": "plain_text",
+								"text": "褒めたい度",
+								"emoji": true
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

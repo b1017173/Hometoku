@@ -1,53 +1,100 @@
+# カスタマイズされたモーダルを返す
+def view_modal(clap:str):
+    return {
+        "callback_id": "modal_homeru",
+        "title": {
+            "type": "plain_text",
+            "text": "Hometoku",
+            "emoji": True
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Submit",
+            "emoji": True
+        },
+        "type": "modal",
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": True
+        },
+        "blocks": [
+            {
+                "type": "divider"
+            },
+            {
+                "block_id": "homepeople",
+                "type": "input",
+                "element": {
+                    "type": "multi_users_select",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "Select users",
+                        "emoji": True
+                    },
+                    "action_id": "select_homepeople"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "褒めたい人",
+                    "emoji": True
+                }
+            },
+            {
+                "block_id": "homemove",
+                "type": "input",
+                "element": {
+                    "type": "plain_text_input",
+                    "multiline": True,
+                    "action_id": "input_homemove"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "褒めたいこと",
+                    "emoji": True
+                }
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "action_id": "prise_countup",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "褒めたい度",
+                            "emoji": True
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "context",
+			    "block_id": "prise_counter",
+			    "elements": [
+				    {
+                        "type": "mrkdwn",
+                        "text": clap
+                    }
+                ]
+            }
+        ]
+        }
+
 # ショートカットが押された時に表示するモーダルを生成する関数
 def view_modal_from_shortcut(client, shortcut):
     # モーダル表示のリクエスト
+    _clap = ":clap:"
     client.views_open(
         trigger_id = shortcut["trigger_id"],
-        view = {
-            "type": "modal",
-            "title": {"type": "plain_text", "text":"My App"},
-            "close": {"type": "plain_text", "text":"Close"},
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text":"About the simplest modal you could conceive of :smile:\n\nMaybe <https://api.slack.com/reference/block-kit/interactive-components|*make the modal interactive*> or <https://api.slack.com/surfaces/modals/using#modifying|*learn more advanced modal use cases*>."
-                    }
-                },
-                {
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text":"Psssst this modal was designed using <https://api.slack.com/tools/block-kit-builder|*Block Kit Builder*>"
-                        }
-                    ]
-                }
-            ]
-        }
+        view = view_modal(_clap)
     )
 
 # 褒めたい度が上がった時にモーダルを更新する関数
-def update_modal_from_countup(body, client):
+def update_modal_from_countup(body, client, view):
+    _clap = view["state"]["values"]["prise_counter"][""]
     client.views_update(
         view_id = body["view"]["id"],
         hash = body["view"]["hash"],
-        view={
-            "type": "modal",
-            # ビューの識別子
-            "callback_id": "view_1",
-            "title": {"type": "plain_text", "text":"Updated modal"},
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {"type": "plain_text", "text":"You updated the modal!"}
-                },
-                {
-                    "type": "image",
-                    "image_url": "https://media.giphy.com/media/SVZGEcYt7brkFUyU90/giphy.gif",
-                    "alt_text":"Yay!The modal was updated"
-                }
-            ]
-        }
+        view = view_modal(_clap)
     )
