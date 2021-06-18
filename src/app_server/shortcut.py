@@ -1,5 +1,5 @@
 def view_modal_from_shortcut(client, shortcut):
-    # モーダル表示のリクエスト
+    # モーダル表示のリクエスト 
     client.views_open(
         trigger_id = shortcut["trigger_id"],
         view = {

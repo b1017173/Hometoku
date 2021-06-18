@@ -32,7 +32,7 @@ def handle_submission(ack, body, client, view, logger):
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
-    # DBへの書き込み
+    # DBへの書き込み 
     # xx.yyyy(_targets, _prise_quantity)
 
 # Start your app
