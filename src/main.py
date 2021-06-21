@@ -1,7 +1,7 @@
 import os
-# Use the package we installed
+
 from slack_bolt import App
-import app_server.shortcut as sc
+import app_server.shortcut as md
 import send
 
 # Initializes your app with your bot token and signing secret
@@ -18,24 +18,28 @@ contents = "ガンバです"
 @app.shortcut("shortcut_homeru")
 def open_modal(ack, shortcut, client):
     print("shortcut")
-    # リクエストを受け付け
     ack()
-    sc.view_modal_from_shortcut(client, shortcut)
+    md.view_modal_from_shortcut(client, shortcut)
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
-def handle_submission(ack, client):
-    print("modal")
+def handle_submission(ack, body, client, view, logger):
     ack()
-    send.contents_to_slack(client, userid, contents)                        
+    _user = body["user"]["id"]                                                              # 投稿ユーザ
+    _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
+    _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
+    print("user: ", _user)
+    print("targets: ", _targets)
+    print("prise writing: ", _prise_writing)
+    send.contents_to_slack(client, _targets, _prise_writing)  
+    # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
+    
+    # メッセージ送信の関数
+    # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
+    # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
-# 'hello' を含むメッセージをリッスンします
-# 指定可能なリスナーのメソッド引数の一覧は以下のモジュールドキュメントを参考にしてください：
-# https://slack.dev/bolt-python/api-docs/slack_bolt/kwargs_injection/args.html
-@app.message("hello")
-def message_hello(message, say):
-    # イベントがトリガーされたチャンネルへ say() でメッセージを送信します
-    say(f"Hey <@{message['user']}>!")
+    # DBへの書き込み 
+    # xx.yyyy(_targets, _prise_quantity)               
 
 # Start your app
 if __name__ == "__main__":
