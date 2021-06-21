@@ -1,23 +1,18 @@
-from slack_bolt import App
-#  必要な要素を取得してSlackに送信して表示
-def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
-
-    client.chat_postMessage(
-        channel="C025BBH57LN",
-        blocks=[
-            {
+{
+	"blocks": [
+		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
 				"text": "ほめたい速報:thumbsup:",
-				"emoji": True
+				"emoji": true
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": mention(targets_id)
+				"text": "いつも頑張っている@ keita Takahashiさん@ Kai Moriuchiさん"
 			}
 		},
 		{
@@ -27,7 +22,7 @@ def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": praise_writing
+				"text": "`親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から..."
 			}
 		},
 		{
@@ -52,19 +47,10 @@ def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 			"title": {
 				"type": "plain_text",
 				"text": "homehome",
-				"emoji": True
+				"emoji": true
 			},
 			"image_url": "https://tenor.com/bfiRs.gif",
 			"alt_text": "marg"
 		}
-        ]
-    )
-
-def mention(user_id):
-
-	targets_id = "いつも頑張っている"
-
-	for targets in user_id:
-		targets_id += "<@" + targets + ">"
-
-	return targets_id
+	]
+}

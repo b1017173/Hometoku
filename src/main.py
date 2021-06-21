@@ -11,9 +11,6 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 
-userid = ['user1','user2']
-contents = "ガンバです"
-
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
 def open_modal(ack, shortcut, client):
