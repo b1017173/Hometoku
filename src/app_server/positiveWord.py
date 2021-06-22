@@ -1,5 +1,6 @@
 import random
 
+#褒める文章を生成する関数
 def positive_str(hp,hm):
 
     positiveList=[hp+'さんへ\n「'+hm+'」\n匿名さんより',
