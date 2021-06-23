@@ -1,61 +1,127 @@
 import mysql.connector
+from mysql.connector import errorcode
+
+def accessMysql(user_id, target_id_list, workspase_id, channel_id):
+    _h = [user_id, target_id_list, workspase_id, channel_id]
+    #_user_id  = user_id
+    #_target_id_list = target_id_list
+    #_workspace_id = workspase_id
+    #_channel_id = channel_id
+
+    _user_id = "KhhjFa"
+    _target_id_list = ["DGGG", "FKGOP"]
+    _workspace_id = "FdEEHKK"
+    _channel_id = "DTYUUO"
 
 # コネクションの作成
-conn = mysql.connector.connect(
-    host='localhost',
-    port='3306',
-    user='hometoku',
-    password='vPZrDNYjLfsV',
-    database='hometoku'
-)
+    _conn = mysql.connector.connect(
+        host='localhost',
+        port='3306',
+        user='hometoku',
+        password='vPZrDNYjLfsV',
+        database='hometoku'
+    )
 
-# コネクションが切れた時に再接続してくれるよう設定
-conn.ping(reconnect=True)
+    # コネクションが切れた時に再接続してくれるよう設定
+    _conn.ping(reconnect=True)
 
-# 接続できているかどうか確認
-print(conn.is_connected())
+    # 接続できているかどうか確認
+    print(_conn.is_connected())
 
-# DB操作用にカーソルを作成
-cur = conn.cursor()
+    # DB操作用にカーソルを作成
+    _cur = _conn.cursor(buffered=True)
 
-# id, name, priceを持つテーブルを（すでにあればいったん消してから）作成
-cur.execute("DROP TABLE IF EXISTS `test_table`")
-cur.execute("""CREATE TABLE IF NOT EXISTS `test_table` (
-    `id` int(11) NOT NULL,
-    `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `price` int(11) NOT NULL,
-    PRIMARY KEY (id)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+    # usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
+    _cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `user_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+      `price` int(11) NOT NULL DEFAULT 0,
+      `workspace_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+      PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-cur.execute("INSERT INTO test_table VALUES (1, 'BTC', 10200)")
+    # channelsテーブルの作成 ： チャンネルIDを管理する#
+    _cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
+      `channel_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+      PRIMARY KEY (channel_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
+    # belongsテーブルの作成 ： usersのユーザーが所属しているチャンネルを紐づけて管理する #
+    _cur.execute("""CREATE TABLE IF NOT EXISTS `belongs` (
+      `id` int(11) NOT NULL,
+      `channel_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+      PRIMARY KEY (id, channel_id),
+      FOREIGN KEY (id) REFERENCES users(id),
+      FOREIGN KEY (channel_id) REFERENCES channels(channel_id) ON UPDATE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-# プレースホルダを利用して挿入
-cur.execute("INSERT INTO test_table VALUES (2, 'ETH', %s)", (5000, ))
-cur.execute("INSERT INTO test_table VALUES (%s, %s, %s)", (3 ,'XEM', 2500))
-cur.execute("INSERT INTO test_table VALUES (%(id)s, %(name)s, %(price)s)", {'id': 4, 'name': 'XRP', 'price': 1000})
+    # MySQLに登録する
+    try:
+        #usersテーブルとbelongsテーブルの中でidが同じものを内部結合する。
+        _insert_sql = "select u.id, u.user_id, u.workspace_id, b.channel_id from users u INNER join belongs b on u.id = b.id;"
+        _cur.execute(_insert_sql)
+        #内部結合されたデータを全て取得#
+        _rows = _cur.fetchall()
 
-# executemanyで複数データを一度に挿入
-records = [
-  (5, 'MONA', 3000),
-  (6, 'XP', 1000),
-]
-cur.executemany("INSERT INTO test_table VALUES (%s, %s, %s)", records)
-conn.commit()
-cur.execute("SELECT * FROM test_table ORDER BY id ASC")
+        #初回の挿入#
+        if len(_rows) == 0:
+            _cur.execute("INSERT INTO channels (channel_id) VALUES (%s)", (_channel_id,))
+            _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
+            _id = _cur.lastrowid
+            _cur.execute("INSERT INTO belongs (id, channel_id) VALUES (%s, %s)", (_id, _channel_id))
+            print("データの挿入に成功したよ1")
+            _conn.commit()
 
-# 全てのデータを取得
-rows = cur.fetchall()
+        #それ以降の挿入#
+        else:
+              # 内部結合されたデータをデータの長さだけ回す #
+            _count = 0
+            for _row in _rows:
+                _row_user_id = _row[1]      # usersのuser_idを格納する
+                _row_workspace_id = _row[2] # usersのworkspace_idを格納する
+                _row_channel_id = _row[3]   # belongsのchannel_idを格納する
+                _count += 1
+                print("_count")
+                  #内部結合されたデータとモーダルに送られた情報をそれぞれ比較し、全て同じ以外の場合に以下の処理を行う#
+                if(_row_user_id != _user_id) or (_row_workspace_id != _workspace_id) or (_row_channel_id != _channel_id):
+                      print(_row_user_id,_row_workspace_id,_row_channel_id)
+                      # channelsテーブルに存在しない場合は、channelsテーブルにチャンネルIDを追加#
+                      _cur.execute("select exists (select * from channels where channel_id = %s)",(_channel_id,))
+                      if _cur.fetchone()[0] == 0 :
+                            print(1)
+                            _cur.execute("INSERT INTO channels (channel_id) VALUES (%s)", (_channel_id,))
+                            _conn.commit()
 
-for row in rows:
-    print(row)
+                        # userIDが異なる場合 #
+                      _cur.execute("select exists (select * from users where user_id = %s)", (_user_id,))
+                      if _cur.fetchone()[0] == 0 :
+                            print(2)
+                            _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
+                            _conn.commit()
 
-# 1件取得
-cur.execute("SELECT * FROM test_table WHERE name=%s", ('BTC', ))
-print(cur.rowcount)
-print(cur.fetchone())
+                        # ワークスペースIDが異なる場合 #
+                      _cur.execute("select exists (select * from users where workspace_id = %s)", (_workspace_id,))
+                      if _cur.fetchone()[0] == 0 :
+                            print(3)
+                            _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
+                            _conn.commit()
+                      _cur.execute("select * from users order by id desc limit 1;")
+                      _last_row = _cur.fetchone()
+                      _id = _last_row[0]
+                      print(4,_id)
+                      _cur.execute("INSERT INTO belongs (id, channel_id) VALUES (%s, %s)", (_id, _channel_id))
+                      print(5)
+                      _conn.commit()
+                      break
 
+    # except mysql.connector.errors.IntegrityError:
+    except mysql.connector.errors.IntegrityError as e:
+        print("挿入する情報が重複しています。")
 
-# DB操作が終わったらカーソルとコネクションを閉じる
-cur.close()
-conn.close()
+    print("データは挿入されなかった")
+
+    # DB操作が終わったらカーソルとコネクションを閉じる
+    _cur.close()
+    _conn.close()
+
+accessMysql(1, 2, 3,4)
