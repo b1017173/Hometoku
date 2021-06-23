@@ -1,5 +1,4 @@
 import mysql.connector
-from mysql.connector import errorcode
 
 def accessMysql(user_id, target_id_list, workspase_id, channel_id):
     _h = [user_id, target_id_list, workspase_id, channel_id]
@@ -69,48 +68,43 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
             _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
             _id = _cur.lastrowid
             _cur.execute("INSERT INTO belongs (id, channel_id) VALUES (%s, %s)", (_id, _channel_id))
-            print("データの挿入に成功したよ1")
             _conn.commit()
 
         #それ以降の挿入#
         else:
               # 内部結合されたデータをデータの長さだけ回す #
-            _count = 0
             for _row in _rows:
                 _row_user_id = _row[1]      # usersのuser_idを格納する
                 _row_workspace_id = _row[2] # usersのworkspace_idを格納する
                 _row_channel_id = _row[3]   # belongsのchannel_idを格納する
-                _count += 1
-                print("_count")
+
                   #内部結合されたデータとモーダルに送られた情報をそれぞれ比較し、全て同じ以外の場合に以下の処理を行う#
                 if(_row_user_id != _user_id) or (_row_workspace_id != _workspace_id) or (_row_channel_id != _channel_id):
-                      print(_row_user_id,_row_workspace_id,_row_channel_id)
+
                       # channelsテーブルに存在しない場合は、channelsテーブルにチャンネルIDを追加#
                       _cur.execute("select exists (select * from channels where channel_id = %s)",(_channel_id,))
                       if _cur.fetchone()[0] == 0 :
-                            print(1)
+
                             _cur.execute("INSERT INTO channels (channel_id) VALUES (%s)", (_channel_id,))
                             _conn.commit()
 
                         # userIDが異なる場合 #
                       _cur.execute("select exists (select * from users where user_id = %s)", (_user_id,))
                       if _cur.fetchone()[0] == 0 :
-                            print(2)
+
                             _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
                             _conn.commit()
 
                         # ワークスペースIDが異なる場合 #
                       _cur.execute("select exists (select * from users where workspace_id = %s)", (_workspace_id,))
                       if _cur.fetchone()[0] == 0 :
-                            print(3)
                             _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
                             _conn.commit()
+
                       _cur.execute("select * from users order by id desc limit 1;")
                       _last_row = _cur.fetchone()
                       _id = _last_row[0]
-                      print(4,_id)
                       _cur.execute("INSERT INTO belongs (id, channel_id) VALUES (%s, %s)", (_id, _channel_id))
-                      print(5)
                       _conn.commit()
                       break
 
@@ -123,5 +117,3 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
     # DB操作が終わったらカーソルとコネクションを閉じる
     _cur.close()
     _conn.close()
-
-accessMysql(1, 2, 3,4)

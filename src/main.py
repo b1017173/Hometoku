@@ -1,7 +1,10 @@
 import os
+from mysql.connector import connect
 # Use the package we installed
 from slack_bolt import App
 import app_server.modal as md
+
+from connect_mysql import accessMysql
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -40,8 +43,12 @@ def handle_submission(ack, body, client, view, logger):
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
-    # DBへの書き込み 
-    # xx.yyyy(_targets, _prise_quantity)
+    # DBへの書き込み
+    _test_user = "DOGPG"
+    _test_targets = ["DODDPPD","AAPOO"]
+    _test_workspace_id = "KAKAK"
+    _test_channel_id = "GFFFP"
+    accessMysql(_test_user, _test_targets, _test_workspace_id, _test_channel_id)
 
 # Start your app
 if __name__ == "__main__":
