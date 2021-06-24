@@ -1,8 +1,6 @@
-def view_modal_from_shortcut(client, shortcut):
-    # モーダル表示のリクエスト
-    client.views_open(
-        trigger_id = shortcut["trigger_id"],
-        view = {
+# カスタマイズされたモーダルを返す
+def view_modal(clap:str):
+    return {
         "callback_id": "modal_homeru",
         "title": {
             "type": "plain_text",
@@ -76,10 +74,30 @@ def view_modal_from_shortcut(client, shortcut):
 			    "elements": [
 				    {
                         "type": "mrkdwn",
-                        "text": ":clap:"
+                        "text": clap
                     }
                 ]
             }
         ]
         }
+
+# ショートカットが押された時に表示するモーダルを生成する関数
+def view_modal_from_shortcut(client, shortcut):
+    # モーダル表示のリクエスト
+    _clap = ":clap:"
+    client.views_open(
+        trigger_id = shortcut["trigger_id"],
+        view = view_modal(_clap)
+    )
+
+# 褒めたい度が上がった時にモーダルを更新する関数
+def update_modal_from_countup(body, client):
+    # _clap = view["state"]["values"]["prise_counter"]
+    # _clap = body["view"]["state"]["values"]["prise_counter"]
+    _clap = body["view"]["blocks"][4]["elements"][0]["text"]
+    _clap += ":clap:"
+    client.views_update(
+        view_id = body["view"]["id"],
+        hash = body["view"]["hash"],
+        view = view_modal(_clap)
     )
