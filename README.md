@@ -1,6 +1,12 @@
 # Hometoku
 Slack app Hometokuの開発
 
+## コーディング規約
+[Pythonの基本的なコーディング規約](https://pep8-ja.readthedocs.io/ja/latest/)を参照    
+ミスってた部分だけピックアップして書き足す
+1. ファイル名：×`positiveWord.py` → ○`positive_word.py`
+2. インデント：× Space2個 → ○ Space4個
+
 ## 利用パッケージの共有方法
 ### 準備
 1. `$ git pull origin main`
