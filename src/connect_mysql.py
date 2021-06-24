@@ -1,18 +1,12 @@
 import mysql.connector
 
 def accessMysql(user_id, target_id_list, workspase_id, channel_id):
-    _h = [user_id, target_id_list, workspase_id, channel_id]
-    #_user_id  = user_id
-    #_target_id_list = target_id_list
-    #_workspace_id = workspase_id
-    #_channel_id = channel_id
+    _user_id  = user_id
+    _target_id_list = target_id_list
+    _workspace_id = workspase_id
+    _channel_id = channel_id
 
-    _user_id = "KhhjFa"
-    _target_id_list = ["DGGG", "FKGOP"]
-    _workspace_id = "FdEEHKK"
-    _channel_id = "DTYUUO"
-
-# コネクションの作成
+    # コネクションの作成
     _conn = mysql.connector.connect(
         host='localhost',
         port='3306',
@@ -84,14 +78,12 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
                       # channelsテーブルに存在しない場合は、channelsテーブルにチャンネルIDを追加#
                       _cur.execute("select exists (select * from channels where channel_id = %s)",(_channel_id,))
                       if _cur.fetchone()[0] == 0 :
-
                             _cur.execute("INSERT INTO channels (channel_id) VALUES (%s)", (_channel_id,))
                             _conn.commit()
 
                         # userIDが異なる場合 #
                       _cur.execute("select exists (select * from users where user_id = %s)", (_user_id,))
                       if _cur.fetchone()[0] == 0 :
-
                             _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
                             _conn.commit()
 
@@ -109,7 +101,7 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
                       break
 
     # except mysql.connector.errors.IntegrityError:
-    except mysql.connector.errors.IntegrityError as e:
+    except mysql.connector.errors.IntegrityError:
         print("挿入する情報が重複しています。")
 
     print("データは挿入されなかった")

@@ -54,7 +54,7 @@ def handle_submission(ack, body, client, view, logger):
     _test_targets = ["DODDPPD","AAPOO"]
     _test_workspace_id = "KAKAK"
     _test_channel_id = "GFFFP"
-    accessMysql(_test_user, _test_targets, _test_workspace_id, _test_channel_id)
+    accessMysql(_user, _targets, _test_workspace_id, _test_channel_id)
 
 # Start your app
 if __name__ == "__main__":
