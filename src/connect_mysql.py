@@ -1,10 +1,11 @@
 import mysql.connector
 
-def accessMysql(user_id, target_id_list, workspase_id, channel_id):
+def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
     _user_id  = user_id
     _target_id_list = target_id_list
     _workspace_id = workspase_id
     _channel_id = channel_id
+    _claps = claps
 
     # コネクションの作成
     _conn = mysql.connector.connect(
@@ -58,7 +59,7 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
             insertMysql(_home_people, _workspace_id, _channel_id, _cur, _conn)
             print("褒めピーポーがDBにいなかったので、新しく追加したよ")
 
-        _cur.execute("update users set price = price + 1 where user_id = %s and workspace_id = %s",(_home_people, _workspace_id))
+        _cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
         _conn.commit()
         print("homeポイント追加")
 
@@ -114,4 +115,4 @@ def insertMysql(user_id, workspase_id, channel_id, cur, conn):
         print("挿入する情報が重複しています。")
 
 # テスト用 #
-accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP")
+accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP", 5)
