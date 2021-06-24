@@ -2,9 +2,6 @@ import mysql.connector
 import schedule
 import time
 
-<<<<<<< HEAD
-def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps, time_stamp):
-=======
 # コネクションの作成
 _conn = mysql.connector.connect(
     host='localhost',
@@ -24,7 +21,6 @@ print(_conn.is_connected())
 _cur = _conn.cursor(buffered=True)
 
 def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
->>>>>>> 9ac25eec009dab2570b97d0bd56f2e28c446d4ba
     _user_id  = user_id
     _target_id_list = target_id_list
     _workspace_id = workspase_id
