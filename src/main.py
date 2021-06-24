@@ -33,28 +33,6 @@ def countup_prise(ack, body, client):
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
 def handle_submission(ack, body, client, view, logger):
-    # リクエストを受け付け
-    ack()
-    _user = body["user"]["id"]                                                              # 投稿ユーザ
-    _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
-    _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
-    _timestamp = datetime.datetime.now()
-    print("user: ", _user)
-    print("targets: ", _targets)
-    print("prise writing: ", _prise_writing)
-    print(_timestamp)
-    # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
-    
-    # メッセージ送信の関数
-    # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
-    # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
-
-    # DBへの書き込み 
-    # xx.yyyy(_targets, _prise_quantity)
-
-# 'homeru'モーダルを Submit したことをリッスン
-@app.view("modal_homeru")
-def handle_submission(ack, body, client, view, logger):
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
