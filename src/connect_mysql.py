@@ -50,25 +50,26 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
 
     # MySQLに登録する
     try:
-        #usersテーブルとbelongsテーブルの中でidが同じものを内部結合する。
+        #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
         _sql = "select exists(select u.id, u.user_id, u.workspace_id, b.channel_id from users u INNER join belongs b on u.id = b.id where u.user_id = %s and u.workspace_id = %s and b.channel_id = %s)"
         _cur.execute(_sql, (_user_id, _workspace_id, _channel_id))
+
+        #一致するものがない場合は、それぞれのテーブルにデータを追加する。
         if(_cur.fetchone()[0] == 0):
-            print("a")
+
             # channelsテーブルに存在しない場合は、channelsテーブルにチャンネルIDを追加#
             _cur.execute("select exists (select * from channels where channel_id = %s)",(_channel_id,))
             if _cur.fetchone()[0] == 0 :
-                print("1")
                 _cur.execute("INSERT INTO channels (channel_id) VALUES (%s)", (_channel_id,))
                 _conn.commit()
 
-            # userIDが異なる場合 #
+            # userIDが異なる場合、usersテーブルに追加#
             _cur.execute("select exists (select * from users where user_id = %s)", (_user_id,))
             if _cur.fetchone()[0] == 0 :
                 _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
                 _conn.commit()
 
-            # ワークスペースIDが異なる場合 #
+            # ワークスペースIDが異なる場合、usersテーブルに追加 #
             _cur.execute("select exists (select * from users where workspace_id = %s)", (_workspace_id,))
             if _cur.fetchone()[0] == 0 :
                 _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
