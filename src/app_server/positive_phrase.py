@@ -6,7 +6,7 @@ def random_positive(targets:list, prise_writing:str):
   for target in targets:
     _targets_str += "<@{0}>".format(target)
   
-  _positiveList = [
+  _positive_phrase_list = [
     "{0}さんへ\n「 *{1}* 」\n匿名さんより".format(_targets_str, prise_writing),
     "{0}の素晴らしい活躍の噂話を聞きました!\n「 *{1}* 」らしいですよ！".format(_targets_str, prise_writing),
     "{0}様．\n *{1}* という素晴らしい功績を残したため，チームメンバーよりここに賞する．".format(_targets_str, prise_writing),
@@ -29,4 +29,4 @@ def random_positive(targets:list, prise_writing:str):
     "花火大会で「{0}へ， *{1}* 」と書いた10寸玉が上がってたよ！"
     ]
 
-  return _positiveList[random.randrange(0,len(_positiveList))] 
+  return _positive_phrase_list[random.randrange(0,len(_positive_phrase_list))] 
