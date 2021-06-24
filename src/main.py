@@ -1,13 +1,20 @@
 import os
+import datetime
 # Use the package we installed
 from slack_bolt import App
 import app_server.modal as md
+import app_server.home as hm
 
 # Initializes your app with your bot token and signing secret
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
+
+# アプリのDMを開いた時にヘルプを表示
+@app.event("app_home_opened")
+def send_help(client, event, logger):
+    hm.view_help_message(client, event, logger)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -31,9 +38,11 @@ def handle_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
+    _timestamp = datetime.datetime.now()
     print("user: ", _user)
     print("targets: ", _targets)
     print("prise writing: ", _prise_writing)
+    print(_timestamp)
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # メッセージ送信の関数
