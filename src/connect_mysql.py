@@ -1,11 +1,14 @@
 import mysql.connector
+import schedule
+import time
 
-def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
+def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps, time_stamp):
     _user_id  = user_id
     _target_id_list = target_id_list
     _workspace_id = workspase_id
     _channel_id = channel_id
     _claps = claps
+    _time_stamp = time_stamp
 
     # コネクションの作成
     _conn = mysql.connector.connect(
@@ -114,5 +117,22 @@ def insertMysql(user_id, workspase_id, channel_id, cur, conn):
     except mysql.connector.errors.IntegrityError:
         print("挿入する情報が重複しています。")
 
+def do_task():
+    # 画面に「タスク実行を表示」
+    print('タスク実行')
+ 
+ 
+def main():
+    # 5分ごとに「タスク実行」を出力
+    schedule.every(1).seconds.do(do_task)
+ 
+    # タスク監視ループ
+    while True:
+        # 当該時間にタスクがあれば実行
+        schedule.run_pending()
+        # 1秒スリープ
+        time.sleep(1)
+
 # テスト用 #
-accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP", 5)
+accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP", 5,1)
+main()
