@@ -2,31 +2,35 @@ import mysql.connector
 import schedule
 import time
 
+<<<<<<< HEAD
 def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps, time_stamp):
+=======
+# コネクションの作成
+_conn = mysql.connector.connect(
+    host='localhost',
+    port='3306',
+    user='hometoku',
+    password='vPZrDNYjLfsV',
+    database='hometoku'
+)
+
+# コネクションが切れた時に再接続してくれるよう設定
+_conn.ping(reconnect=True)
+
+# 接続できているかどうか確認
+print(_conn.is_connected())
+
+# DB操作用にカーソルを作成
+_cur = _conn.cursor(buffered=True)
+
+def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
+>>>>>>> 9ac25eec009dab2570b97d0bd56f2e28c446d4ba
     _user_id  = user_id
     _target_id_list = target_id_list
     _workspace_id = workspase_id
     _channel_id = channel_id
     _claps = claps
     _time_stamp = time_stamp
-
-    # コネクションの作成
-    _conn = mysql.connector.connect(
-        host='localhost',
-        port='3306',
-        user='hometoku',
-        password='vPZrDNYjLfsV',
-        database='hometoku'
-    )
-
-    # コネクションが切れた時に再接続してくれるよう設定
-    _conn.ping(reconnect=True)
-
-    # 接続できているかどうか確認
-    print(_conn.is_connected())
-
-    # DB操作用にカーソルを作成
-    _cur = _conn.cursor(buffered=True)
 
     # usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
     _cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
@@ -52,14 +56,11 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps, time_s
       FOREIGN KEY (channel_id) REFERENCES channels(channel_id) ON UPDATE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-    # Mysqlに登録
-    insertMysql(_user_id, _workspace_id, _channel_id, _cur, _conn)
-
     # 褒めピーポーの追加
     for _home_people in _target_id_list:
         _cur.execute("select exists (select * from users where user_id = %s)",(_home_people,))
         if _cur.fetchone()[0] == 0 :
-            insertMysql(_home_people, _workspace_id, _channel_id, _cur, _conn)
+            insertMysql(_home_people, _workspace_id, _channel_id)
             print("褒めピーポーがDBにいなかったので、新しく追加したよ")
 
         _cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
@@ -70,12 +71,24 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps, time_s
     _cur.close()
     _conn.close()
 
-def insertMysql(user_id, workspase_id, channel_id, cur, conn):
+def returnClapNum():
+    _result = []
+
+    _cur.execute("select workspace_id from users group by workspace_id;")
+    _workspacce_id_list = _cur.fetchall()
+
+    for _workspace_id in _workspacce_id_list:
+        _cur.execute("select u.workspace_id, b.channel_id, u.user_id, u.price from users u join belongs b on u.id = b.id where u.workspace_id = %s order by u.price desc;", (_workspace_id))
+        _list = _cur.fetchall()
+        _result.append(_list)
+
+    return _result
+
+
+def insertMysql(user_id, workspase_id, channel_id):
     _user_id        = user_id
     _workspace_id   = workspase_id
     _channel_id     = channel_id
-    _cur            = cur
-    _conn           = conn
 
     try:
         #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
@@ -134,5 +147,4 @@ def main():
         time.sleep(1)
 
 # テスト用 #
-accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP", 5,1)
-main()
+accessMysql("d9d9OSC",["SLDID","fpsojspj","spafj"],"smmdoidoodp", "zmmSP", 0)
