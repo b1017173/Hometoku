@@ -7,6 +7,7 @@ from mysql.connector import connect
 # Use the package we installed
 from slack_bolt import App
 import app_server.modal as md
+import app_server.home as hm
 
 from connect_mysql import accessMysql
 
@@ -15,6 +16,11 @@ app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
+
+# アプリのDMを開いた時にヘルプを表示
+@app.event("app_home_opened")
+def send_help(client, event, logger):
+    hm.view_help_message(client, event, logger)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
