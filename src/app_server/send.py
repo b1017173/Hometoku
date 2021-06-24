@@ -1,10 +1,10 @@
 import app_server.positive_phrase as ph
 
-#  必要な要素を取得してSlackに送信して表示させる関数
+#  modalに入力された内容をSlackで表示させる関数
 def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 
     client.chat_postMessage(
-        channel="C024ZBFDEU9",  #  testチャンネル:C025BBH57LN random:C024ZBFDEU9
+        channel="C025BBH57LN",  #  testチャンネル:C025BBH57LN random:C024ZBFDEU9
         blocks=[
 		{
 			"type": "section",
