@@ -1,33 +1,16 @@
-from slack_bolt import App
-#  必要な要素を取得してSlackに送信して表示
+import app_server.positive_phrase as ph
+
+#  必要な要素を取得してSlackに送信して表示させる関数
 def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 
     client.chat_postMessage(
-        channel="C025BBH57LN",
+        channel="C024ZBFDEU9",  #  testチャンネル:C025BBH57LN random:C024ZBFDEU9
         blocks=[
-            {
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "ほめたい速報:thumbsup:",
-				"emoji": True
-			}
-		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": mention(targets_id)
-			}
-		},
-		{
-			"type": "divider"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": praise_writing
+				"text": ph.random_positive(targets_id,praise_writing)
 			}
 		},
 		{
@@ -59,12 +42,3 @@ def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 		}
         ]
     )
-
-def mention(user_id):
-
-	targets_id = "いつも頑張っている"
-
-	for targets in user_id:
-		targets_id += "<@" + targets + ">"
-
-	return targets_id
