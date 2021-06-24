@@ -48,7 +48,31 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
       FOREIGN KEY (channel_id) REFERENCES channels(channel_id) ON UPDATE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-    # MySQLに登録する
+    # Mysqlに登録
+    insertMysql(_user_id, _workspace_id, _channel_id, _cur, _conn)
+
+    # 褒めピーポーの追加
+    for _home_people in _target_id_list:
+        _cur.execute("select exists (select * from users where user_id = %s)",(_home_people,))
+        if _cur.fetchone()[0] == 0 :
+            insertMysql(_home_people, _workspace_id, _channel_id, _cur, _conn)
+            print("褒めピーポーがDBにいなかったので、新しく追加したよ")
+
+        _cur.execute("update users set price = price + 1 where user_id = %s and workspace_id = %s",(_home_people, _workspace_id))
+        _conn.commit()
+        print("homeポイント追加")
+
+    # DB操作が終わったらカーソルとコネクションを閉じる
+    _cur.close()
+    _conn.close()
+
+def insertMysql(user_id, workspase_id, channel_id, cur, conn):
+    _user_id        = user_id
+    _workspace_id   = workspase_id
+    _channel_id     = channel_id
+    _cur            = cur
+    _conn           = conn
+
     try:
         #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
         _sql = "select exists(select u.id, u.user_id, u.workspace_id, b.channel_id from users u INNER join belongs b on u.id = b.id where u.user_id = %s and u.workspace_id = %s and b.channel_id = %s)"
@@ -89,10 +113,5 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id):
     except mysql.connector.errors.IntegrityError:
         print("挿入する情報が重複しています。")
 
-
-    # DB操作が終わったらカーソルとコネクションを閉じる
-    _cur.close()
-    _conn.close()
-
 # テスト用 #
-#accessMysql("SLIC","DFVVV","DPXAL", "KCOFOPAP")
+accessMysql("SLIC",["DVSPPS","SICJML","FOFFFLL"],"DPXAL", "KCOFOPAP")
