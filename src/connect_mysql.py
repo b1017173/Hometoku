@@ -49,9 +49,6 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
       FOREIGN KEY (channel_id) REFERENCES channels(channel_id) ON UPDATE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-    # Mysqlに登録
-    insertMysql(_user_id, _workspace_id, _channel_id)
-
     # 褒めピーポーの追加
     for _home_people in _target_id_list:
         _cur.execute("select exists (select * from users where user_id = %s)",(_home_people,))
@@ -59,12 +56,10 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
             insertMysql(_home_people, _workspace_id, _channel_id)
             print("褒めピーポーがDBにいなかったので、新しく追加したよ")
 
-        #_cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
+        _cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
         _conn.commit()
         print("homeポイント追加")
 
-    _clap_list = returnClapNum()
-    [print(i) for i in _clap_list]
     # DB操作が終わったらカーソルとコネクションを閉じる
     _cur.close()
     _conn.close()
@@ -74,9 +69,6 @@ def returnClapNum():
 
     _cur.execute("select workspace_id from users group by workspace_id;")
     _workspacce_id_list = _cur.fetchall()
-
-    _cur.execute("select channel_id from channels;")
-    _channel_id_list = _cur.fetchall()
 
     for _workspace_id in _workspacce_id_list:
         _cur.execute("select u.workspace_id, b.channel_id, u.user_id, u.price from users u join belongs b on u.id = b.id where u.workspace_id = %s order by u.price desc;", (_workspace_id))
@@ -132,4 +124,4 @@ def insertMysql(user_id, workspase_id, channel_id):
         print("挿入する情報が重複しています。")
 
 # テスト用 #
-accessMysql("SOSC",["CMCO"],"smmxnp", "KCOSSSP", 5)
+accessMysql("d9d9OSC",["SLDID","fpsojspj","spafj"],"smmdoidoodp", "zmmSP", 0)
