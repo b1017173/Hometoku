@@ -1,0 +1,19 @@
+{
+	"blocks": [
+		{
+			"type": "section",
+			"fields": [
+				{
+					"type": "plain_text",
+					"text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n#channelで呼んでもらってもいいかな....??",
+					"emoji": true
+				}
+			]
+		},
+		{
+			"type": "image",
+			"image_url": "https://tenor.com/vIAq.gif",
+			"alt_text": "failure..."
+		}
+	]
+}
