@@ -60,8 +60,8 @@ def handle_submission(ack, body, client, view, logger):
     _test_targets = ["DODDPPD","AAPOO"]
     _test_workspace_id = "KAKAK"
     _test_channel_id = "GFFFP"
-    accessMysql(_user, _targets, _test_workspace_id, _test_channel_id)
-    _result = returnClapNum()
+    accessMysql(_user, _targets, _test_workspace_id, _test_channel_id, 5)
+    _result = returnClapNum("smmdoidoodp")
     [print(i) for i in _result]
 
 # Start your app
