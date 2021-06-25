@@ -41,6 +41,8 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
       FOREIGN KEY (workspace_id) REFERENCES users(workspace_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
+    # ユーザーの登録
+    insertMysql(_user_id, _workspace_id, _channel_id)
     # 褒めピーポーの追加
     for _home_people in _target_id_list:
         _cur.execute("select exists (select * from users where workspace_id = %s and user_id = %s)",(_workspace_id, _home_people))
@@ -116,5 +118,5 @@ def insertMysql(user_id, workspase_id, channel_id):
         print("挿入する情報が重複しています。")
 
 # テスト用 #
-accessMysql("d9d9OSC",["SLDID","fpsojspj","spafj"],"eomrrdp", "z", 0)
+accessMysql("eeoOSC",["ooncm"],"eomrrdp", "z", 0)
 returnClapNum("smmdoidoodp")
