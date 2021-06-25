@@ -2,6 +2,7 @@ import os
 import datetime
 # Use the package we installed
 from slack_bolt import App
+import app_server.set_channel as sc
 import app_server.modal as md
 import app_server.home as hm
 
@@ -15,6 +16,11 @@ app = App(
 @app.event("app_home_opened")
 def send_help(client, event, logger):
     hm.view_help_message(client, event, logger)
+
+@app.command("/hometoku_set_channel")
+def get_channel_command(ack, say, command, client):
+    ack()
+    sc.set_channel(say, command, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
