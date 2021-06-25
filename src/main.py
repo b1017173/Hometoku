@@ -4,14 +4,11 @@ import datetime
 from slack_bolt import App
 import app_server.modal as md
 import app_server.home as hm
-
 # Initializes your app with your bot token and signing secret
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
-
-# アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
 def send_help(client, event, logger):
     hm.view_help_message(client, event, logger)
@@ -37,8 +34,7 @@ def handle_submission(ack, body, client, view, logger):
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
-    _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
-    
+    _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと 
     _workspace_id = body["team"]["id"]
     _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
     _timestamp = datetime.datetime.now()
