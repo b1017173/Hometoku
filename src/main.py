@@ -5,6 +5,7 @@ from slack_bolt import App
 import app_server.modal as md
 import app_server.home as hm
 import app_server.send as sd
+import app_server.monthly_ranking as mr
 
 # Initializes your app with your bot token and signing secret
 
@@ -61,4 +62,5 @@ def handle_submission(ack, body, client, view, logger):
 
 # Start your app
 if __name__ == "__main__":
+    str = mr.monthly_ranking()
     app.start(port=int(os.environ.get("PORT", 3000)))
