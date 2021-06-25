@@ -4,8 +4,10 @@ import datetime
 from slack_bolt import App
 import app_server.modal as md
 import app_server.home as hm
+import app_server.send as sd
 
 # Initializes your app with your bot token and signing secret
+
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
@@ -51,11 +53,11 @@ def handle_submission(ack, body, client, view, logger):
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # メッセージ送信の関数
-    # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
+    sd.contents_to_slack(client, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
     # DBへの書き込み 
-    # xx.yyyy(_targets, _prise_quantity)
+    # xx.yyyy(_targets, _prise_quantity)               
 
 # Start your app
 if __name__ == "__main__":
