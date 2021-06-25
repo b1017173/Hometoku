@@ -37,9 +37,16 @@ def handle_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
+    
+    _workspace_id = body["team"]["id"]
+    _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
+    _timestamp = datetime.datetime.now()
     print("user: ", _user)
     print("targets: ", _targets)
     print("prise writing: ", _prise_writing)
+    print("workspace id: ", _workspace_id)
+    print("clap num: ", _clap_num)
+    print("timestamp: ", _timestamp)
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # メッセージ送信の関数
