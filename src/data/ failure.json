@@ -4,9 +4,8 @@
 			"type": "section",
 			"fields": [
 				{
-					"type": "plain_text",
-					"text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n#channelで呼んでもらってもいいかな....??",
-					"emoji": true
+					"type": "mrkdwn",
+					"text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n#channelで呼んでもらってもいいかな....??"
 				}
 			]
 		},
