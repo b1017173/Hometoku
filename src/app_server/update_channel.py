@@ -62,6 +62,7 @@ def exit_channel(_channel_id, client, db):
 	except Exception as e:
 		print("Error: Failed to join the channel.\n{0}".format(e))
 
+# 別のチャンネルに参加中
 def cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client, db):
 	_failed_message = failed_join_channel(_joined_channel_id)
 
