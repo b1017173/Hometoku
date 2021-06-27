@@ -3,7 +3,7 @@ import mysql.connector
 # コネクションの作成
 _conn = mysql.connector.connect(
     host='localhost',
-    port='3306',
+    port='3306'
 )
 
 # コネクションが切れた時に再接続してくれるよう設定
@@ -15,9 +15,12 @@ print(_conn.is_connected())
 # DB操作用にカーソルを作成
 _cur = _conn.cursor(buffered=True)
 
+# hometokuデータベースの作成
 _cur.execute("CREATE DATABASE IF NOT EXISTS `hometoku`")
+# hometokuデータベースの使用
 _cur.execute("use `hometoku`")
 
+ # hometokuに編集権限をふよ
 _cur.execute("CREATE USER IF NOT EXISTS 'hometoku'@'localhost' IDENTIFIED BY 'vPZrDNYjLfsV'")
 _cur.execute("GRANT all ON *.* TO 'hometoku'@'localhost'")
 
@@ -39,10 +42,10 @@ _cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
 
 # 褒められた回数と褒められた人を登録する関数 #
 def setClapNum(target_id_list, workspase_id, channel_id, claps):
-    _target_id_list = target_id_list
-    _workspace_id = workspase_id
-    _channel_id = channel_id
-    _claps = claps
+    _target_id_list = target_id_list # 褒められた人の変数
+    _workspace_id   = workspase_id   # ワークスペースIDの変数
+    _channel_id     = channel_id     # チャンネルIDの変数
+    _claps          = claps          # クラップの回数
 
     # コネクションが切れた時に再接続してくれるよう設定
     _conn.ping(reconnect=True)
@@ -51,16 +54,18 @@ def setClapNum(target_id_list, workspase_id, channel_id, claps):
     # hometokuデータベースを使用
     _cur.execute("use `hometoku`")
 
-    # 褒めピーポーの追加
+    # 褒めピーポーの追加 #
+
     for _home_people in _target_id_list:
+        # 褒めピーポーがDBに居るかいないかをチェックする
         _cur.execute("select exists (select * from users where workspace_id = %s and user_id = %s)",(_workspace_id, _home_people))
-        if _cur.fetchone()[0] == 0 :
-            insertUserInfo(_home_people, _workspace_id, _channel_id)
+        if _cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+            insertUserInfo(_home_people, _workspace_id, _channel_id) #褒められた人がDBにいない時追加
             print("褒めピーポーがDBにいなかったので、新しく追加したよ")
 
         _cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
         _conn.commit()
-        print("homeポイント追加")
+        print("homeポイント追加したよ")
 
     # DB操作が終わったらカーソルとコネクションを閉じる
     _cur.close()
@@ -166,7 +171,15 @@ def insertUserInfo(user_id, workspase_id, channel_id):
 
 
 # テスト用 #
+#引数：褒められた人(基本リスト)、ワークスペースID、チャンネルID、褒められ度
+#返り値：なし
 setClapNum(["ooncm"],"eomrrdp", "z", 0)
+
+#引数：褒められた人()、ワークスペースID
+#返り値：指定したワークスペースIDに所属する人の情報(ワークスペースID、チャンネルID、ユーザーID, 褒められ度)を返す。変える順番は、褒められた度をが大きい順
 getClapNum("smmdoidoodp")
+
+#引数：ワークスペースID、変更前のチャンネルID、変更後のチャンネルID
+#返り値：なし
 updateChannelID("eomrrdp","z","aiueo")
 
