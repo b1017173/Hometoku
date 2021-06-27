@@ -1,10 +1,10 @@
 # ホームタブに表示するヘルプのビュー
-def view_help_message(client, event, logger):
+def view_help_message(client, _user_id, logger):
     _channel_id = "未登録"
     # TODO: データベースにアクセスして登録チャンネルを取得する
     try:
         client.views_publish(
-            user_id = event["user"],
+            user_id = _user_id,
             view = {
                 "type": "home",
                 "blocks": [
@@ -48,7 +48,7 @@ def view_help_message(client, event, logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*現在の登録チャンネル：*{0}".format(_channel_id)
+                            "text": "*現在の登録チャンネル：* {0}".format(_channel_id)
                         },
                         "accessory": {
                             "type": "button",
@@ -155,6 +155,7 @@ def view_modal_from_help(body, client):
                     }
                 },
                 {
+                    "block_id": "selecter",
                     "type": "actions",
                     "elements": [
                         {
