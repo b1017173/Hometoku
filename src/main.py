@@ -1,10 +1,16 @@
 import os
 import datetime
+
+from mysql.connector import connect
+
+
 # Use the package we installed
 from slack_bolt import App
 import app_server.update_channel as uc
 import app_server.modal as md
 import app_server.home as hm
+
+from connect_mysql import setClapNum, getClapNum, updateChannelID
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -60,7 +66,15 @@ def handle_submission(ack, body, client, view, logger):
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
     # DBへの書き込み
-    # xx.yyyy(_targets, _prise_quantity)
+    _test_user = "DOGPG"
+    _test_targets = ["DODDPPD","AAPOO"]
+    _test_workspace_id = "KAKAK"
+    _test_channel_id = "GFFFP"
+    _test_clap_num = 5
+    setClapNum(_targets, _test_workspace_id, _test_channel_id, _test_clap_num)
+    _result = getClapNum("smmdoidoodp")
+    [print(i) for i in _result]
+    updateChannelID(_test_workspace_id, _test_channel_id, "next_channel_id")
 
 # Start your app
 if __name__ == "__main__":
