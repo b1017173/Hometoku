@@ -6,7 +6,6 @@ from slack_bolt.listener.builtins import TokenRevocationListeners
 import app_server.modal as md
 import app_server.home as hm
 import app_server.send as sd
-import app_server.get_id as get
 
 # Initializes your app with your bot token and signing secret
 
@@ -52,11 +51,8 @@ def handle_submission(ack, body, client, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
-    # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
-    # メッセージ送信の関数
-    sd.contents_to_slack(client, _targets, _prise_writing)
-    # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
+    sd.view_praise_message(client, _targets, _prise_writing, _clap_num, logger) # modalに入力された内容をSlackで表示させる
 
     # DBへの書き込み 
     # xx.yyyy(_targets, _prise_quantity)               
