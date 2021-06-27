@@ -1,7 +1,6 @@
 # ホームタブに表示するヘルプのビュー
 def view_help_message(client, _user_id, logger):
-    _channel_id = "未登録"
-    # TODO: データベースにアクセスして登録チャンネルを取得する
+    _channel_id = "未登録"  # TODO: データベースにアクセスして登録チャンネルを取得する
     try:
         client.views_publish(
             user_id = _user_id,
@@ -41,7 +40,7 @@ def view_help_message(client, _user_id, logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*✅ チャンネルの登録*\n\nホメとくを使うためには，ホメとくが活躍できるチャンネルを登録する必要があります．以下の *変更/更新ボタン* をタップしてチャンネルの登録をしてみましょう．"
+                            "text": "*:white_check_mark: チャンネルの登録*\n\nホメとくを使うためには，ホメとくが活躍できるチャンネルを登録する必要があります．以下の *変更/更新ボタン* をタップしてチャンネルの登録をしてみましょう．"
                         }
                     },
                     {
@@ -86,7 +85,7 @@ def view_help_message(client, _user_id, logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*👏 ホメる！*\n\n*ホメる！* 機能を使うことで，匿名でチームメンバーに *ホメるメッセージ(ホメッセージ)* を伝えることができます．ホメる！機能はショートカットから使うことができます．"
+                            "text": "*:clap: ホメる！*\n\n*ホメる！* 機能を使うことで，匿名でチームメンバーに *ホメるメッセージ(ホメッセージ)* を伝えることができます．ホメる！機能はショートカットから使うことができます．"
                         }
                     },
                     {

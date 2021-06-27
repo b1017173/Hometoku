@@ -3,6 +3,7 @@ import datetime
 # Use the package we installed
 from slack_bolt import App
 import app_server.shortcut as sc
+import app_server.update_channel as uc
 import app_server.home as hm
 
 # Initializes your app with your bot token and signing secret
@@ -28,8 +29,9 @@ def open_modal_update_channel(ack, body, client):
 def dummy(ack):
     ack()
 
+# チャンネル登録のモーダルのリスナー
 @app.view("modal_update_channel")
-def handle_update_channel_submission(ack, body, client, view, logger):
+def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
     # 入力されたチャンネルIDの取得
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
@@ -38,8 +40,28 @@ def handle_update_channel_submission(ack, body, client, view, logger):
         return
     print("channel id: ", _channel_id)
     print("user id: ", _user_id)
-    # TODO: チャンネル設定の登録・更新
+
+    _db = None
+    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    if _joined_channel_id == "":
+        uc.setup_channel(say, _channel_id, client, _db)
+    else:
+        uc.update_channel(say, _channel_id, _joined_channel_id, client, _db)
     hm.view_help_message(client, _user_id, logger)
+
+# チャンネル登録のコマンドのリスナー
+@app.command("/hometoku_set_channel")
+def get_channel_command(ack, say, command, client):
+    ack()
+    _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
+    _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
+
+    _db = None
+    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    if _joined_channel_id == "":
+        uc.setup_channel(say, _channel_id, client, _db)
+    else:
+        uc.cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -79,7 +101,7 @@ def handle_homeru_submission(ack, body, client, view, logger):
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
-    # DBへの書き込み 
+    # DBへの書き込み
     # xx.yyyy(_targets, _prise_quantity)
 
 # Start your app
