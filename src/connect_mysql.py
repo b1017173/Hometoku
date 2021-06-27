@@ -4,8 +4,6 @@ import mysql.connector
 _conn = mysql.connector.connect(
     host='localhost',
     port='3306',
-    user='hometoku',
-    password='vPZrDNYjLfsV',
 )
 
 # コネクションが切れた時に再接続してくれるよう設定
@@ -19,6 +17,9 @@ _cur = _conn.cursor(buffered=True)
 
 _cur.execute("CREATE DATABASE IF NOT EXISTS `hometoku`")
 _cur.execute("use `hometoku`")
+
+_cur.execute("CREATE USER IF NOT EXISTS 'hometoku'@'localhost' IDENTIFIED BY 'vPZrDNYjLfsV'")
+_cur.execute("GRANT all ON *.* TO 'hometoku'@'localhost'")
 
 # usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
 _cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
