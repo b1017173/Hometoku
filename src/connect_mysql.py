@@ -36,7 +36,7 @@ _cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
     FOREIGN KEY (workspace_id) REFERENCES users(workspace_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-# 褒められた回数と人を登録する関数 #
+# 褒められた回数と褒められた人を登録する関数 #
 def insertClapNum(target_id_list, workspase_id, channel_id, claps):
     _target_id_list = target_id_list
     _workspace_id = workspase_id
@@ -97,6 +97,7 @@ def getClapNum(workspace_id):
 
     return _result
 
+# チャンネルIDを更新する関数
 def updateChannelID(workspace_id, prev_channel_id, next_channel_id) :
     _workspace_id = workspace_id
     _prev_channel_id = prev_channel_id #変える前のチャンネルID
