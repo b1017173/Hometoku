@@ -16,9 +16,15 @@ app = App(
 def send_help(client, event, logger):
     hm.view_help_message(client, event, logger)
 
+@app.action("update_channel")
+def open_modal_set_channel(ack, body, client):
+    ack()
+    hm.view_modal_from_help(body, client)
+    print("DEBUG!")
+
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
-def open_modal(ack, shortcut, client):
+def open_modal_homeru(ack, shortcut, client):
     # リクエストを受け付け
     ack()
     md.view_modal_from_shortcut(client, shortcut)
