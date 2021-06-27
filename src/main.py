@@ -2,14 +2,14 @@ import os
 import datetime
 
 from mysql.connector import connect
-
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # Use the package we installed
 from slack_bolt import App
 import app_server.modal as md
 import app_server.home as hm
 
-from connect_mysql import accessMysql, returnClapNum
+from connect_mysql import setClapNum, getClapNum, updateChannelID, resetClapNum
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -44,11 +44,16 @@ def handle_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
+    
+    _workspace_id = body["team"]["id"]
+    _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
     _timestamp = datetime.datetime.now()
     print("user: ", _user)
     print("targets: ", _targets)
     print("prise writing: ", _prise_writing)
-    print(_timestamp)
+    print("workspace id: ", _workspace_id)
+    print("clap num: ", _clap_num)
+    print("timestamp: ", _timestamp)
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # メッセージ送信の関数
@@ -60,9 +65,19 @@ def handle_submission(ack, body, client, view, logger):
     _test_targets = ["DODDPPD","AAPOO"]
     _test_workspace_id = "KAKAK"
     _test_channel_id = "GFFFP"
-    accessMysql(_user, _targets, _test_workspace_id, _test_channel_id, 5)
-    _result = returnClapNum("smmdoidoodp")
+    _test_clap_num = 5
+    setClapNum(_targets, _test_workspace_id, _test_channel_id, _test_clap_num)
+    _result = getClapNum("smmdoidoodp")
     [print(i) for i in _result]
+    
+
+    scheduler = BlockingScheduler()
+    scheduler.add_job(resetClapNum, 'interval', days=1)
+    scheduler.add_job(resetClapNum, 'interval', minutes=1)
+    try:
+        scheduler.start()
+    except KeyboardInterrupt:
+        pass
 
 # Start your app
 if __name__ == "__main__":
