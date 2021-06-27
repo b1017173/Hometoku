@@ -1,5 +1,5 @@
 # コマンドによってチャンネルに参加する(参加できるのは1つのチャンネルだけ)
-def set_channel(say, command, client):
+def update_channel(say, command, client):
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
     _joined_channel_id:str = ""  # 既に参加しているチャンネルID用の変数
@@ -7,20 +7,20 @@ def set_channel(say, command, client):
     #  参加した時に表示させるMessagePreview
     _success_message = {
 	        "blocks": [
-		            {
-			            "type": "section",
-			            "text": {
-				            "type": "mrkdwn",
-				            "text": "招待ありがとう！！\nこれからはこのチャンネルでホメッセージを発信していくよ！！"
-			         }
-		            },
-		            {
-			            "type": "image",
-			            "image_url": "https://media.giphy.com/media/cnuS67F8IoVTYRvJXE/giphy.gif",
-			            "alt_text": "success!!!"
-		            }
-	            ]
-            }
+				{
+			        "type": "section",
+			        "text": {
+				        "type": "mrkdwn",
+				        "text": "招待ありがとう！！\nこれからはこのチャンネルでホメッセージを発信していくよ！！"
+					}
+				},
+		        {
+			        "type": "image",
+			        "image_url": "https://media.giphy.com/media/cnuS67F8IoVTYRvJXE/giphy.gif",
+			        "alt_text": "success!!!"
+		        }
+	        ]
+        }
 
     #  すでに参加している時に表示させるMessagePreview
     _failure_message = {
