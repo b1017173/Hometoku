@@ -4,7 +4,7 @@ import app_server.positive_phrase as ph
 def contents_to_slack(client, targets_id, praise_writing, *prise_quantity):
 
     client.chat_postMessage(
-        channel="C025BBH57LN",  #  testチャンネル:C025BBH57LN random:C024ZBFDEU9
+        channel="C026DHW2A2G",  #  testチャンネル:C025BBH57LN random:C024ZBFDEU9 test_kai：C026DHW2A2G
         blocks=[
 		{
 			"type": "section",
