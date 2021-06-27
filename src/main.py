@@ -9,7 +9,7 @@ from slack_bolt import App
 import app_server.modal as md
 import app_server.home as hm
 
-from connect_mysql import accessMysql, returnClapNum
+from connect_mysql import setClapNum, getClapNum, updateChannelID
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -65,9 +65,11 @@ def handle_submission(ack, body, client, view, logger):
     _test_targets = ["DODDPPD","AAPOO"]
     _test_workspace_id = "KAKAK"
     _test_channel_id = "GFFFP"
-    accessMysql(_user, _targets, _test_workspace_id, _test_channel_id, 5)
-    _result = returnClapNum("smmdoidoodp")
+    _test_clap_num = 5
+    setClapNum(_targets, _test_workspace_id, _test_channel_id, _test_clap_num)
+    _result = getClapNum("smmdoidoodp")
     [print(i) for i in _result]
+    updateChannelID(_test_workspace_id, _test_channel_id, "next_channel_id")
 
 # Start your app
 if __name__ == "__main__":

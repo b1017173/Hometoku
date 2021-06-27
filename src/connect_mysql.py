@@ -37,7 +37,7 @@ _cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
 # 褒められた回数と褒められた人を登録する関数 #
-def insertClapNum(target_id_list, workspase_id, channel_id, claps):
+def setClapNum(target_id_list, workspase_id, channel_id, claps):
     _target_id_list = target_id_list
     _workspace_id = workspase_id
     _channel_id = channel_id
@@ -165,7 +165,7 @@ def insertUserInfo(user_id, workspase_id, channel_id):
 
 
 # テスト用 #
-insertClapNum(["ooncm"],"eomrrdp", "z", 0)
+setClapNum(["ooncm"],"eomrrdp", "z", 0)
 getClapNum("smmdoidoodp")
 updateChannelID("eomrrdp","z","aiueo")
 
