@@ -1,5 +1,6 @@
 import mysql.connector
 import schedule
+import datetime
 import time
 
 # コネクションの作成
@@ -26,7 +27,6 @@ def accessMysql(user_id, target_id_list, workspase_id, channel_id, claps):
     _workspace_id = workspase_id
     _channel_id = channel_id
     _claps = claps
-    _time_stamp = time_stamp
 
     # usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
     _cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
@@ -120,14 +120,35 @@ def insertMysql(user_id, workspase_id, channel_id):
     except mysql.connector.errors.IntegrityError:
         print("挿入する情報が重複しています。")
 
-def do_task():
-    # 画面に「タスク実行を表示」
-    print('タスク実行')
- 
- 
-def main():
+def checkDate():
+    _now = datetime.datetime.now()
+
+    # コネクションが切れた時に再接続してくれるよう設定
+    _conn.ping(reconnect=True)
+
+    # DB操作用にカーソルを作成
+    _cur = _conn.cursor(buffered=True)
+
+    _cur.execute("update users set price = 0 where price > 0")
+    _conn.commit()
+    _cur.execute("select user_id, price from users")
+    _result = _cur.fetchall()
+    print(_result)
+
+    if _now.date == 1:
+        returnClapNum("smmdoidoodp")
+        _cur.execute("update users set price = 0 where price > 0")
+        _cur.execute("select user_id, price from users")
+        _result = _cur.fetchall()
+        print(_result)
+    
+    _cur.close()
+    _conn.close()
+
+
+def checkTime():
     # 5分ごとに「タスク実行」を出力
-    schedule.every(1).seconds.do(do_task)
+    schedule.every().day.at("12:49").do(checkDate)
  
     # タスク監視ループ
     while True:
@@ -137,5 +158,6 @@ def main():
         time.sleep(1)
 
 # テスト用 #
-accessMysql("eeoOSC",["ooncm"],"eomrrdp", "z", 0)
-returnClapNum("smmdoidoodp")
+#accessMysql("eeoOSC",["ooncm"],"eomrrdp", "z", 0)
+#returnClapNum("smmdoidoodp")
+checkTime()
