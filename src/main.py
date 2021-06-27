@@ -2,6 +2,7 @@ import os
 import datetime
 # Use the package we installed
 from slack_bolt import App
+import app_server.update_channel as uc
 import app_server.modal as md
 import app_server.home as hm
 
@@ -15,6 +16,11 @@ app = App(
 @app.event("app_home_opened")
 def send_help(client, event, logger):
     hm.view_help_message(client, event, logger)
+
+@app.command("/hometoku_set_channel")
+def get_channel_command(ack, say, command, client):
+    ack()
+    uc.update_channel(say, command, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -33,7 +39,6 @@ def countup_prise(ack, body, client):
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
 def handle_submission(ack, body, client, view, logger):
-    # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
@@ -54,7 +59,7 @@ def handle_submission(ack, body, client, view, logger):
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
-    # DBへの書き込み 
+    # DBへの書き込み
     # xx.yyyy(_targets, _prise_quantity)
 
 # Start your app
