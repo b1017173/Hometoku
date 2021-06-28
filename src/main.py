@@ -34,8 +34,8 @@ def countup_prise(ack, body, client):
     ack()
     md.update_modal_from_countup(body, client)
 
+mr.post_monthlyranking(app.client)
 
-mr.post_monthlyranking(WebClient(token=os.environ["SLACK_BOT_TOKEN"]))
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")

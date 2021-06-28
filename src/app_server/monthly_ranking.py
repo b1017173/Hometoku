@@ -45,7 +45,7 @@ def post_monthlyranking(client): #褒められた回数を各ワークスペー�
             view["blocks"].append(_ranking)
 
          try :
-            client.chat_postMessage(channel = idList[1],text = view)
+            response = client.chat_postMessage(channel = idList[1],text = view)
          except Exception as e:
             print("Error: Failed to send a message the channel.\n{0}".format(e))
 
