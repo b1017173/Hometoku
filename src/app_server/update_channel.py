@@ -25,7 +25,7 @@ def failed_join_channel(_joined_channel_id):
 			"fields": [
 				{
 					"type": "mrkdwn",
-					"text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n<#{0}>で呼んでもらってもいいかな....??".format(_joined_channel_id)
+					"text": "ごめんなさい....\nもうすでに<#{0}>に登録されているんだ....\nもしチャンネルを更新したい場合は\n`/hometoku_update_channel`\nを登録したいチャンネルで入力してね！！".format(_joined_channel_id)
 				}
 			]
 		},
@@ -38,15 +38,17 @@ def failed_join_channel(_joined_channel_id):
 
 # 既に参加しているチャンネル内でコマンドが呼ばれたときのメッセージプレビュー
 def aleady_exist_channel(_user_id):
-	return {
-		"type": "section",
-		"fields": [
-			{
-				"type": "mrkdwn",
-				"text":"もうすでにこのチャンネルにいるよ！！ \n <@{0}>さんからのホメッセージ，待ってるよ！！".format(_user_id)
-			}
-		]
-	}
+	return [
+		{
+			"type": "section",
+			"fields": [
+				{
+					"type": "mrkdwn",
+					"text":"もうすでにこのチャンネルにいるよ！！ \n <@{0}>さんからのホメッセージ，待ってるよ！！".format(_user_id)
+				}
+			]
+		}
+	]
 # 参加チャンネルを更新
 def update_channel(say, _new_channel_id, _old_channel_id, client, db):
 	exit_channel(_old_channel_id, client, db)
@@ -87,6 +89,6 @@ def send_aleady_exist_message(_channel_id, _user_id, client):
 
 	try:
 		# コマンドを読んだ人にしか見えないメッセージを送信
-		client.chat_postEphemeral(channel = _channel_id, user = _user_id, blocks = [_exist_message])
+		client.chat_postEphemeral(channel = _channel_id, user = _user_id, blocks = _exist_message)
 	except Exception as e:
 		print("Error: Failed to send the exist message.\n{0}".format(e))
