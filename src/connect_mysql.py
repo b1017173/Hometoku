@@ -1,185 +1,161 @@
 import mysql.connector
 
-# コネクションの作成
-_conn = mysql.connector.connect(
-    host='localhost',
-    port='3306'
-)
+class AccessDB:
 
-# コネクションが切れた時に再接続してくれるよう設定
-_conn.ping(reconnect=True)
+    def __init__(self):                  # コンストラクタ
+        self.conn = mysql.connector.connect(
+            host = 'localhost',
+            port = '3306'
+        )
 
-# 接続できているかどうか確認
-print(_conn.is_connected())
+        # コネクションが切れた時に再接続してくれるよう設定
+        self.conn.ping(reconnect=True)
 
-# DB操作用にカーソルを作成
-_cur = _conn.cursor(buffered=True)
+        # 接続できているかどうか確認
+        print(self.conn.is_connected())
 
-# hometokuデータベースの作成
-_cur.execute("CREATE DATABASE IF NOT EXISTS `hometoku`")
-# hometokuデータベースの使用
-_cur.execute("use `hometoku`")
+        # DB操作用にカーソルを作成
+        self.cur = self.conn.cursor(buffered=True)
 
- # hometokuに編集権限をふよ
-_cur.execute("CREATE USER IF NOT EXISTS 'hometoku'@'localhost' IDENTIFIED BY 'vPZrDNYjLfsV'")
-_cur.execute("GRANT all ON *.* TO 'hometoku'@'localhost'")
+        # hometokuデータベースの作成
+        self.cur.execute("CREATE DATABASE IF NOT EXISTS `hometoku`")
+        # hometokuデータベースの使用
+        self.cur.execute("use `hometoku`")
 
-# usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
-_cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
-    `workspace_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `user_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `price` int(11) NOT NULL DEFAULT 0,
-    PRIMARY KEY (workspace_id, user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        # hometokuに編集権限をふよ
+        self.cur.execute("CREATE USER IF NOT EXISTS 'hometoku'@'localhost' IDENTIFIED BY 'vPZrDNYjLfsV'")
+        self.cur.execute("GRANT all ON *.* TO 'hometoku'@'localhost'")
 
-# channelsテーブルの作成 ： usersのユーザーが所属しているチャンネルを紐づけて管理する #
-_cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
-    `workspace_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `channel_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-    PRIMARY KEY (workspace_id, channel_id),
-    FOREIGN KEY (workspace_id) REFERENCES users(workspace_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        # usersテーブルの作成 ： ユーザーID、ほめられた回数、ワークスペースのIDを管理する #
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS `users` (
+            `workspace_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `user_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `price` int(11) NOT NULL DEFAULT 0,
+            PRIMARY KEY (workspace_id, user_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-# 褒められた回数と褒められた人を登録する関数 #
-def setClapNum(target_id_list, workspase_id, channel_id, claps):
-    _target_id_list = target_id_list # 褒められた人の変数
-    _workspace_id   = workspase_id   # ワークスペースIDの変数
-    _channel_id     = channel_id     # チャンネルIDの変数
-    _claps          = claps          # クラップの回数
+        # channelsテーブルの作成 ： usersのユーザーが所属しているチャンネルを紐づけて管理する #
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS `channels` (
+            `workspace_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+            `channel_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+            PRIMARY KEY (workspace_id, channel_id),
+            FOREIGN KEY (workspace_id) REFERENCES users(workspace_id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-    # コネクションが切れた時に再接続してくれるよう設定
-    _conn.ping(reconnect=True)
-    # DB操作用にカーソルを作成
-    _cur = _conn.cursor(buffered=True)
-    # hometokuデータベースを使用
-    _cur.execute("use `hometoku`")
+        # DB操作が終わったらカーソルとコネクションを閉じる
+        self.cur.close()
+        self.conn.close()
 
-    # 褒めピーポーの追加 #
 
-    for _home_people in _target_id_list:
-        # 褒めピーポーがDBに居るかいないかをチェックする
-        _cur.execute("select exists (select * from users where workspace_id = %s and user_id = %s)",(_workspace_id, _home_people))
-        if _cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-            insertUserInfo(_home_people, _workspace_id, _channel_id) #褒められた人がDBにいない時追加
-            print("褒めピーポーがDBにいなかったので、新しく追加したよ")
+    # 褒められた回数と褒められた人を登録する関数 #
+    def set_clap_num(self, target_id_list, workspase_id, channel_id, claps):
+        self.target_id_list = target_id_list # 褒められた人の変数
+        self.workspace_id   = workspase_id   # ワークスペースIDの変数
+        self.channel_id     = channel_id     # チャンネルIDの変数
+        self.claps          = claps          # クラップの回数
 
-        _cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(_claps, _home_people, _workspace_id))
-        _conn.commit()
-        print("homeポイント追加したよ")
+        # コネクションが切れた時に再接続してくれるよう設定
+        self.conn.ping(reconnect=True)
+        # DB操作用にカーソルを作成
+        self.cur = self.conn.cursor(buffered=True)
+        # hometokuデータベースを使用
+        self.cur.execute("use `hometoku`")
 
-    # DB操作が終わったらカーソルとコネクションを閉じる
-    _cur.close()
-    _conn.close()
+        # 褒めピーポーの追加 #
 
- # 褒められた回数を返す関数 #
-def getClapNum(workspace_id):
-    _workspace_id = workspace_id
-    _result = []
+        for home_people in self.target_id_list:
+            # 褒めピーポーがDBに居るかいないかをチェックする
+            self.cur.execute("select exists (select * from users where workspace_id = %s and user_id = %s)",(self.workspace_id, home_people))
+            if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+                #褒められた人がDBにいない時追加
+                try :
+                    #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
+                    _sql = "select exists(select * from users u INNER join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s and u.user_id = %s)"
+                    self.cur.execute(_sql, (self.workspace_id, home_people))
 
-    # コネクションが切れた時に再接続してくれるよう設定
-    _conn.ping(reconnect=True)
-    # DB操作用にカーソルを作成
-    _cur = _conn.cursor(buffered=True)
-    # hometokuデータベースを使用
-    _cur.execute("use `hometoku`")
+                    #一致するものがない場合は、それぞれのテーブルにデータを追加する。
+                    if(self.cur.fetchone()[0] == 0): # 1:データが存在するとき, 0:データが存在しないとき
 
-    # ワークスペースIDが存在するか確認
-    _cur.execute("select exists (select * from users where workspace_id = %s)", (_workspace_id,))
+                        # userID, workspace_idがusersテーブルになければ追加#
+                        self.cur.execute("select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)", (home_people, self.workspace_id))
+                        if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+                            self.cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (home_people, 0, self.workspace_id))
+                            self.conn.commit()
 
-    if _cur.fetchone()[0] == 1 : # 1:データが存在するとき, 0:データが存在しないとき
-         # 内部結合したテーブルの中で引数のworkspace_idと一致するものを褒められた順で取得
-        _cur.execute("select u.workspace_id, c.channel_id, u.user_id, u.price from users u join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s order by u.price desc;", (_workspace_id,))
-        print("褒められ度を降順で取得したよ!")
-    else:
-        print("ワークスペースIDがないから、褒められた度を取得できなかったよ(泣)")
+                        # channels_id,  workspace_idがchannelsテーブルになければ追加#
+                        self.cur.execute("select exists (select * from channels where channel_id = %s and workspace_id = %s)",(self.channel_id, self.workspace_id))
+                        if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+                            self.cur.execute("INSERT INTO channels (workspace_id, channel_id) VALUES (%s, %s)", (self.workspace_id, self.channel_id))
+                            self.conn.commit()
 
-    # 取得したデータをreslutに入れる
-    _result = _cur.fetchall()
-    print(_result)
+                        print("データは挿入は成功したよ")
 
-    # DB操作が終わったらカーソルとコネクションを閉じる
-    _cur.close()
-    _conn.close()
+                    else :
+                        print("データは存在するので追加しませんでした。")
 
-    return _result
+                # 挿入する情報が重複した場合のエラー処理:
+                except mysql.connector.errors.IntegrityError:
+                    print("挿入する情報が重複しています。")
 
-# チャンネルIDを更新する関数
-def updateChannelID(workspace_id, prev_channel_id, next_channel_id) :
-    _workspace_id = workspace_id
-    _prev_channel_id = prev_channel_id #変える前のチャンネルID
-    _next_channel_id = next_channel_id #変えた後のチャンネルID
+                print("褒めピーポーがDBにいなかったので、新しく追加したよ")
 
-    # コネクションが切れた時に再接続してくれるよう設定
-    _conn.ping(reconnect=True)
-    # DB操作用にカーソルを作成
-    _cur = _conn.cursor(buffered=True)
-    # hometokuデータベースを使用
-    _cur.execute("use `hometoku`")
 
-    # ワークスペースIDとチャンネルIDが存在するか確認
-    _cur.execute("select exists (select * from channels where workspace_id = %s and channel_id = %s)", (_workspace_id, _prev_channel_id))
-    
-    if _cur.fetchone()[0] == 1 : # 1:データが存在するとき, 0:データが存在しないとき
-         # channelsテーブルの中で、ワークスペースIDと変える前のチャンネルID(prev_channel_id)が等しい行を変えた後のチャンネルID(next_channel_id)に変更する #
-        _cur.execute("update channels set channel_id = %s where workspace_id = %s and channel_id = %s", (_next_channel_id, _workspace_id, _prev_channel_id))
-        # 変更をDB側にコミットする
-        _conn.commit()
-        print("チャンネルIDを変更したよ。")
-    else :
-        print("変更するIDが見つかりませんでした。")
+            self.cur.execute("update users set price = price + 1 + %s where user_id = %s and workspace_id = %s",(self.claps, home_people, self.workspace_id))
+            self.conn.commit()
+            print("homeポイント追加したよ")
 
-    # DB操作が終わったらカーソルとコネクションを閉じる
-    _cur.close()
-    _conn.close()
+        print("set_clap_numが完了したよ")
 
-# ユーザー情報を登録する関数 #
-def insertUserInfo(user_id, workspase_id, channel_id):
-    _user_id        = user_id
-    _workspace_id   = workspase_id
-    _channel_id     = channel_id
+        # DB操作が終わったらカーソルとコネクションを閉じる
+        self.cur.close()
+        self.conn.close()
 
-    try:
-        #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
-        _sql = "select exists(select * from users u INNER join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s and u.user_id = %s)"
-        _cur.execute(_sql, (_workspace_id, _user_id))
+    # 褒められた回数を返す関数 #
+    def get_clap_num(self, workspace_id):
+        self.workspace_id = workspace_id
+        _result = []
 
-        #一致するものがない場合は、それぞれのテーブルにデータを追加する。
-        if(_cur.fetchone()[0] == 0): # 1:データが存在するとき, 0:データが存在しないとき
+        # コネクションが切れた時に再接続してくれるよう設定
+        self.conn.ping(reconnect=True)
+        # DB操作用にカーソルを作成
+        self.cur = self.conn.cursor(buffered=True)
+        # hometokuデータベースを使用
+        self.cur.execute("use `hometoku`")
 
-            # userID, workspace_idがusersテーブルになければ追加#
-            _cur.execute("select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)", (_user_id, _workspace_id))
-            if _cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-                _cur.execute("INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)", (_user_id, 0, _workspace_id))
-                _conn.commit()
+        # ワークスペースIDが存在するか確認
+        self.cur.execute("select exists (select * from users where workspace_id = %s)", (self.workspace_id,))
 
-            # channels_id,  workspace_idがchannelsテーブルになければ追加#
-            _cur.execute("select exists (select * from channels where channel_id = %s and workspace_id = %s)",(_channel_id, _workspace_id))
-            print(1)
-            if _cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-                print(2)
-                _cur.execute("INSERT INTO channels (workspace_id, channel_id) VALUES (%s, %s)", (_workspace_id, _channel_id))
-                _conn.commit()
-
-            print("データは挿入は成功したよ")
-
+        if self.cur.fetchone()[0] == 1 : # 1:データが存在するとき, 0:データが存在しないとき
+            # 内部結合したテーブルの中で引数のworkspace_idと一致するものを褒められた順で取得
+            self.cur.execute("select u.workspace_id, c.channel_id, u.user_id, u.price from users u join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s order by u.price desc limit 3;", (self.workspace_id,))
+            print("褒められ度を降順で取得したよ!")
         else:
-            print("データは存在するので追加しませんでした。")
+            print("ワークスペースIDがないから、褒められた度を取得できなかったよ(泣)")
 
-    # 挿入する情報が重複した場合のエラー処理:
-    except mysql.connector.errors.IntegrityError:
-        print("挿入する情報が重複しています。")
+        # 取得したデータをreslutに入れる
+        _result = self.cur.fetchall()
+        
+        print("get_clap_numが完了したよ")
 
+        # DB操作が終わったらカーソルとコネクションを閉じる
+        self.cur.close()
+        self.conn.close()
+
+        return _result
 
 # テスト用 #
+test_class = AccessDB()
 #引数：褒められた人(基本リスト)、ワークスペースID、チャンネルID、褒められ度
 #返り値：なし
-setClapNum(["ooncm"],"eomrrdp", "z", 0)
+test_class.set_clap_num(["aoiui","docmcm","onnnvn","q88"],"test", "nckncl", 5)
 
 #引数：褒められた人()、ワークスペースID
 #返り値：指定したワークスペースIDに所属する人の情報(ワークスペースID、チャンネルID、ユーザーID, 褒められ度)を返す。変える順番は、褒められた度をが大きい順
-getClapNum("smmdoidoodp")
+a = test_class.get_clap_num("test")
+#print(a)
 
-#引数：ワークスペースID、変更前のチャンネルID、変更後のチャンネルID
+#引数：ワークスペースID、チャンネルID
 #返り値：なし
-updateChannelID("eomrrdp","z","aiueo")
+#test_class.delete_channel_id("test", "nckncl")
 
+#test_class.set_channel_id("tset","gu")
