@@ -2,9 +2,12 @@ import os
 import datetime
 # Use the package we installed
 from slack_bolt import App
+from slack_sdk.web import client
 import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
+import app_server.send as sd
+import app_server.monthly_ranking as mr
 
 # Initializes your app with your bot token and signing secret
 app = App(
@@ -77,6 +80,12 @@ def countup_prise(ack, body, client):
     ack()
     sc.update_modal_from_countup(body, client)
 
+# デバッグ用
+@app.message("debug_post_ranking")
+def debug_post_ranking():
+    _client = app.client
+    mr.post_ranking(_client, "")
+
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
 def handle_homeru_submission(ack, body, client, view, logger):
@@ -98,7 +107,7 @@ def handle_homeru_submission(ack, body, client, view, logger):
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # メッセージ送信の関数
-    # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
+    sd.contents_to_slack(client, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
     # DBへの書き込み
