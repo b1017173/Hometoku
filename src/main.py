@@ -58,10 +58,30 @@ def get_channel_command(ack, say, command, client):
 
     _db = None
     _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
-    if _joined_channel_id == "":
-        uc.setup_channel(say, _channel_id, client, _db)
-    else:
-        uc.cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client)
+
+    # デバッグ用
+    _joined_channel_id = "C026DHW2A2G"
+    uc.cant_setup_channel(_joined_channel_id, _user_id, client)
+
+    # if _joined_channel_id == "":
+    #     uc.setup_channel(say, _channel_id, client, _db)
+    # else:
+    #     uc.cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client)
+
+# チャンネル更新のコマンドリスナー
+@app.command("/hometoku_update_channel")
+def get_update_channel_command(ack, say, command, client):
+    ack()
+    _channel_id = command["channel_id"] # コマンドがよばれたチャンネルID用の変数
+    _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
+
+    _db = None
+    _joined_channel_id = "" # TODO: dbにアクセスしてすでに参加しているチャンネルがあればそれを返す
+
+    if _joined_channel_id == "":  # 参加していないチャンネルでコマンドがよばれた場合
+        uc.update_channel(say, _channel_id, _joined_channel_id, client, _db)
+    else:  # すでに参加しているチャンネルでコマンドがよばれた場合
+        uc.send_aleady_exist_message(_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
