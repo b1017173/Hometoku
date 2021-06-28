@@ -1,57 +1,74 @@
-# コマンドによってチャンネルに参加する(参加できるのは1つのチャンネルだけ)
-def update_channel(say, command, client):
-    _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
-    _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
-    _joined_channel_id:str = ""  # 既に参加しているチャンネルID用の変数
+# 参加に成功した際のメッセージプレビュー
+def success_join_channel():
+	return {
+		"blocks": [
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": "招待ありがとう！！\nこれからはこのチャンネルでホメッセージを発信していくよ！！"
+				}
+			},
+			{
+				"type": "image",
+				"image_url": "https://media.giphy.com/media/cnuS67F8IoVTYRvJXE/giphy.gif",
+				"alt_text": "success!!!"
+			}
+		]
+	}
 
-    #  参加した時に表示させるMessagePreview
-    _success_message = {
-	        "blocks": [
-				{
-			        "type": "section",
-			        "text": {
-				        "type": "mrkdwn",
-				        "text": "招待ありがとう！！\nこれからはこのチャンネルでホメッセージを発信していくよ！！"
+# 他に参加しているチャンネルがあるときのメッセージプレビュー
+def failed_join_channel(_joined_channel_id):
+	return {
+		"blocks": [
+			{
+				"type": "section",
+				"fields": [
+					{
+						"type": "mrkdwn",
+						"text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n<#{0}>で呼んでもらってもいいかな....??".format(_joined_channel_id)
 					}
-				},
-		        {
-			        "type": "image",
-			        "image_url": "https://media.giphy.com/media/cnuS67F8IoVTYRvJXE/giphy.gif",
-			        "alt_text": "success!!!"
-		        }
-	        ]
-        }
+				]
+			},
+			{
+				"type": "image",
+				"image_url": "https://tenor.com/vIAq.gif",
+				"alt_text": "failure..."
+			}
+		]
+	}
 
-    #  すでに参加している時に表示させるMessagePreview
-    _failure_message = {
-	        "blocks": [
-		        {
-			        "type": "section",
-			        "fields": [
-				        {
-					        "type": "mrkdwn",
-					        "text": "ごめんなさい....\nもう他のチャンネルにいるんだよね....\n<#{0}>で呼んでもらってもいいかな....??".format(_joined_channel_id)
-				        }
-			        ]
-		        },
-		        {
-			        "type": "image",
-			        "image_url": "https://tenor.com/vIAq.gif",
-			        "alt_text": "failure..."
-		        }
-	        ]
-        }
+# コマンドによってチャンネルに参加する(参加できるのは1つのチャンネルだけ)
+def update_channel(say, _new_channel_id, _old_channel_id, client, db):
+	exit_channel(_old_channel_id, client, db)
+	setup_channel(say, _new_channel_id, client, db)
 
-    try:
-        # TODO: DBにアクセスしてすでに参加しているチャンネルがないかを調べる
-        # if 参加している:
-		# TODO:すでに参加しているチャンネルIDをDBから取得して _joined_channel_idに保存
-		# コマンドを呼び出した人だけに見えるメッセージを送信
-        # client.chat_postEphemeral(text = _failure_message, channel = _channel_id, user = _user_id)  
-        # else:
-        client.conversations_join(channel = _channel_id)  #  コマンドが入力されたチャンネルに参加する
-        say(text = _success_message, channel = _channel_id)  #  コマンドが入力されたチャンネルに参加したよのメッセージ送信
-		# TODO: DBにBotが参加したワークスペースID，チャンネルIDを追加する
+# チャンネルの参加
+def setup_channel(say, _channel_id, client, db):
+	_success_message = success_join_channel()
 
-    except Exception as e:
-        print("Error: Failed to join the channel.\n{0}".format(e))
+	try:
+		# TODO: db.チャンネル情報の書き込み(_channel_id)
+		client.conversations_join(channel = _channel_id)
+		say(text = _success_message, channel = _channel_id)
+	except Exception as e:
+		print("Error: Failed to join the channel.\n{0}".format(e))
+
+# チャンネルの退出
+def exit_channel(_channel_id, client, db):
+	try:
+		client.conversations_leave(channel = _channel_id)
+		# TODO: db.チャンネル情報の消去()
+	except Exception as e:
+		print("Error: Failed to join the channel.\n{0}".format(e))
+
+# 別のチャンネルに参加中
+def cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client, db):
+	_failed_message = failed_join_channel(_joined_channel_id)
+
+	try:
+		# TODO: 単純にsay()するのではなく，_user_idのユーザにのみ見えるメッセージで
+		# 		他のチャンネルに参加していることを伝える
+		pass
+	except Exception as e:
+		print("Error: Failed to join the channel.\n{0}".format(e))
