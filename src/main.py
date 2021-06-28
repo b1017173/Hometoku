@@ -6,6 +6,7 @@ import app_server.modal as md
 import app_server.home as hm
 import app_server.send as sd
 import app_server.monthly_ranking as mr
+from slack_sdk import WebClient
 
 # Initializes your app with your bot token and signing secret
 
@@ -32,6 +33,9 @@ def countup_prise(ack, body, client):
     # リクエストを受け付け
     ack()
     md.update_modal_from_countup(body, client)
+
+
+mr.post_monthlyranking(WebClient(token=os.environ["SLACK_BOT_TOKEN"]))
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
@@ -62,5 +66,4 @@ def handle_submission(ack, body, client, view, logger):
 
 # Start your app
 if __name__ == "__main__":
-    str = mr.monthly_ranking()
     app.start(port=int(os.environ.get("PORT", 3000)))
