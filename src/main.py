@@ -9,7 +9,6 @@ import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
 
-
 # Initializes your app with your bot token and signing secret
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -42,17 +41,17 @@ def dummy(ack):
 @app.view("modal_update_channel")
 def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
-    # 入力されたチャンネルIDの取得
-    #ワークスペースIDが欲しい
+    
     _workspace_id = body["team"]["id"]
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _user_id = body["user"]["id"]
-    if _channel_id == None:
+    if _channel_id == None: # 未入力で送信された場合は，何も処理しない
         return
-    print("channel id: ", _channel_id)
-    print("user id: ", _user_id)
+    print("workspace id: ", _workspace_id)
+    print("  channel id: ", _channel_id)
+    print("     user id: ", _user_id)
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    _joined_channel_id = db.get_channel_id(_workspace_id)
     if _joined_channel_id == "":
         uc.setup_channel(say, _workspace_id, _channel_id, client, db)
     else:
@@ -68,7 +67,7 @@ def get_channel_command(ack, say, command, client):
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    _joined_channel_id = db.get_channel_id(_workspace_id)
 
     if _joined_channel_id == "":
         uc.setup_channel(say, _workspace_id, _channel_id, client, db)
@@ -83,7 +82,7 @@ def get_update_channel_command(ack, say, command, client):
     _channel_id = command["channel_id"] # コマンドがよばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてすでに参加しているチャンネルがあればそれを返す
+    _joined_channel_id = db.get_channel_id(_workspace_id)
 
     if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
         uc.update_channel(say, _channel_id, _joined_channel_id, client, db)

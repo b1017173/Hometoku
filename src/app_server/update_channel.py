@@ -58,7 +58,7 @@ def update_channel(say, _workspace_id, _new_channel_id, _old_channel_id, client,
 def setup_channel(say, _workspace_id, _channel_id, client, db):
 	_success_message = success_join_channel()
 	try:
-		# db.set_channel_id(_workspace_id, _channel_id)
+		db.set_channel_id(_workspace_id, _channel_id)
 		client.conversations_join(channel = _channel_id)
 		say(text = _success_message, channel = _channel_id)
 	except Exception as e:
