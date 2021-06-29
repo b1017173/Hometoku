@@ -7,7 +7,7 @@ class Database:
             port = "3306"
         )
         
-        self.openDB(True)
+        self.open_db(True)
 
         # hometokuに編集権限を付与
         self.cur.execute("CREATE USER IF NOT EXISTS 'hometoku'@'localhost' IDENTIFIED BY 'vPZrDNYjLfsV'")
@@ -29,11 +29,11 @@ class Database:
                 FOREIGN KEY (workspace_id) REFERENCES channels(workspace_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
 
-        self.closeDB()
+        self.close_db()
 
     # DBへの書き込み
     def write_score(self, workspace_id:str, target_ids:list, claps:int):
-        self.openDB()
+        self.open_db()
 
         # 褒められピーポーの追加
         # → userID, workspace_idがusersテーブルになければ追加
@@ -56,23 +56,23 @@ class Database:
             except mysql.connector.errors.IntegrityError as e:
                 print("Error: Failed to reflect score.\n'{0}'".format(e))
 
-        self.closeDB()
+        self.close_db()
 
     # DBの更新(スコアのリセット)
     def reset_score(self):
-        self.openDB()
+        self.open_db()
         
         self.cur.execute("UPDATE users SET score = '0'")
         self.conn.commit()
         print("Reset users score.")
 
-        self.closeDB()
+        self.close_db()
 
     # DBへの読み込み
     def read_score(self, workspace_id:str, range:int):
         _result = []
 
-        self.openDB()
+        self.open_db()
         # 引数に与えられたidを持つユーザの取得
         self.cur.execute("SELECT * FROM users WHERE workspace_id = '{0}'".format(workspace_id))
 
@@ -85,13 +85,13 @@ class Database:
             _result = _result[:range]
             print("result: ", _result)
 
-        self.closeDB()
+        self.close_db()
 
         return _result
 
     # チャンネルIDを登録する関数
     def set_channel_id(self, workspace_id, channel_id) :
-        self.openDB()
+        self.open_db()
 
         # ワークスペースIDが存在するか確認
         self.cur.execute("SELECT workspace_id FROM channels WHERE workspace_id = '{0}'".format(workspace_id))
@@ -107,21 +107,21 @@ class Database:
             self.conn.commit()
             print("Insert new record into channels table.\n('{0}', '{1}')".format(workspace_id, channel_id))
 
-        self.closeDB()
+        self.close_db()
     
     # ワークスペースIDからチャンネルIDを返す
     def get_channel_id(self, workspace_id):
         _channel_id = ""
-        self.openDB()
+        self.open_db()
         self.cur.execute("SELECT channel_id FROM channels WHERE workspace_id = '{0}'".format(workspace_id))
         _channel_id =  self.cur.fetchone()[0]
         print("Get channel id: '{0}' from workspace id: '{1}'.".format(_channel_id, workspace_id))
 
-        self.closeDB()
+        self.close_db()
         return _channel_id
 
     # DBの操作を開始する
-    def openDB(self, isInit = False):
+    def open_db(self, isInit = False):
         try:
             # コネクションが切れた時に再接続してくれるよう設定
             self.conn.ping(reconnect=True)
@@ -145,7 +145,7 @@ class Database:
             print("Error: An error occurred while connecting to the database.\n'{0}'".format(e))
 
     # DB操作が終わったらカーソルとコネクションを閉じる
-    def closeDB(self):
+    def close_db(self):
         try:
             self.cur.close()
             self.conn.close()
@@ -153,7 +153,7 @@ class Database:
             print("Error: An error occurred while disconnecting to the database.\n'{0}'".format(e))
 
 
-    def debugDB(self):
+    def debug_db(self):
         _workspace_id = "WORKSPACEID"
         _channel_id = "CHANNELID"
         _channel_id_updated = "MEGACHANNELID"

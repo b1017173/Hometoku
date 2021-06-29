@@ -19,7 +19,7 @@ app = App(
 # データベースのインスタンス生成
 db = cm.Database()
 # デバッグ用
-# db.debugDB()
+# db.debug_db()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
