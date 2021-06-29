@@ -40,21 +40,21 @@ class Database:
         for target_id in target_ids:
             try :
                 # 褒められた人がDBにいない時追加
-                self.cur.execute("SELECT user_id, workspace_id FROM users WHERE user_id = {0} AND workspace_id = {1}".format(target_id, workspace_id))
+                self.cur.execute("SELECT user_id, workspace_id FROM users WHERE user_id = '{0}' AND workspace_id = '{1}'".format(target_id, workspace_id))
                 if len(self.cur.fetchall()) < 1:    # データが存在しないとき
-                    self.cur.execute("INSERT INTO users (user_id, score, workspace_id) VALUES ({0}, {1}, {2})".format(target_id, 0, workspace_id))
+                    self.cur.execute("INSERT INTO users (user_id, score, workspace_id) VALUES ('{0}', '{1}', '{2}')".format(target_id, 0, workspace_id))
                     self.conn.commit()
-                    print("Insert new record into users table.\n({0}, {1}, {2})".format(target_id, 0, workspace_id))
+                    print("Insert new record into users table.\n('{0}', '{1}', '{2}')".format(target_id, 0, workspace_id))
                 
                 # 褒めスコアの追加
                 _score = 8 + claps  # ベーススコア: 8
-                self.cur.execute("UPDATE users SET score = score + {0} WHERE user_id = {1} AND workspace_id = {2}".format(_score, target_id, workspace_id))
+                self.cur.execute("UPDATE users SET score = score + '{0}' WHERE user_id = '{1}' AND workspace_id = '{2}'".format(_score, target_id, workspace_id))
                 self.conn.commit()
-                print("homeポイント追加したよ")
+                print("Update score.")
 
             # 挿入する情報が重複した場合のエラー処理:
             except mysql.connector.errors.IntegrityError as e:
-                print("Error: Failed to reflect score.\n{0}".format(e))
+                print("Error: Failed to reflect score.\n'{0}'".format(e))
 
         self.closeDB()
 
@@ -62,7 +62,8 @@ class Database:
     def reset_score(self):
         self.openDB()
         
-        self.cur.execute("UPDATE users SET score = 0")
+        self.cur.execute("UPDATE users SET score = '0'")
+        self.conn.commit()
         print("Reset users score.")
 
         self.closeDB()
@@ -73,14 +74,16 @@ class Database:
 
         self.openDB()
         # 引数に与えられたidを持つユーザの取得
-        self.cur.execute("SELECT * FROM users WHERE workspace_id = {0}".format(workspace_id))
+        self.cur.execute("SELECT * FROM users WHERE workspace_id = '{0}'".format(workspace_id))
 
         if 0 < len(self.cur.fetchall()):    # ユーザが存在するとき
             # 内部結合したテーブルの中で引数のworkspace_idと一致するものを褒められた順で取得
             # users: u, channels: c
-            self.cur.execute("SELECT workspace_id, user_id, score FROM users WHERE workspace_id = {0} ORDER BY score DESC LIMIT {1}".format(workspace_id, range))
-            print("Selected score ranking.\n{0}".format(self.cur.fetchall()))
+            self.cur.execute("SELECT workspace_id, user_id, score FROM users WHERE workspace_id = '{0}' ORDER BY score DESC".format(workspace_id))
             _result = self.cur.fetchall()
+            print("Selected score ranking.\n'{0}'".format(_result))
+            _result = _result[:range]
+            print("result: ", _result)
 
         self.closeDB()
 
@@ -91,18 +94,18 @@ class Database:
         self.openDB()
 
         # ワークスペースIDが存在するか確認
-        self.cur.execute("SELECT workspace_id FROM channels WHERE workspace_id = {0}".format(workspace_id))
+        self.cur.execute("SELECT workspace_id FROM channels WHERE workspace_id = '{0}'".format(workspace_id))
         
         if 0 < len(self.cur.fetchall()):    # ワークスペースの登録があるとき
             # チャンネルIDの書き換え
-            self.cur.execute("UPDATE channels SET channel_id = {0} WHERE workspace_is = {1}".format(channel_id, workspace_id))
+            self.cur.execute("UPDATE channels SET channel_id = '{0}' WHERE workspace_id = '{1}'".format(channel_id, workspace_id))
             self.conn.commit()
-            print("Update channel id: {0} from warkspase:{1}".format(channel_id, workspace_id))
+            print("Update channel id: '{0}' from warkspase:'{1}'".format(channel_id, workspace_id))
         else :
             # 初回登録の際はワークスペースIDとチャンネルIDを登録する。
-            self.cur.execute("INSERT INTO channels (workspace_id, channel_id) VALUES ({0}, {1})".format(workspace_id, channel_id))
+            self.cur.execute("INSERT INTO channels (workspace_id, channel_id) VALUES ('{0}', '{1}')".format(workspace_id, channel_id))
             self.conn.commit()
-            print("Insert new record into channels table.\n({0}, {1})".format(workspace_id, channel_id))
+            print("Insert new record into channels table.\n('{0}', '{1}')".format(workspace_id, channel_id))
 
         self.closeDB()
     
@@ -110,9 +113,9 @@ class Database:
     def get_channel_id(self, workspace_id):
         _channel_id = ""
         self.openDB()
-        self.cur.execute("SELECT channel_id FROM channels WHERE workspace_id = {0}".format(workspace_id))
+        self.cur.execute("SELECT channel_id FROM channels WHERE workspace_id = '{0}'".format(workspace_id))
         _channel_id =  self.cur.fetchone()[0]
-        print("Get channel id: {0} from workspace id: {1}.".format(_channel_id, workspace_id))
+        print("Get channel id: '{0}' from workspace id: '{1}'.".format(_channel_id, workspace_id))
 
         self.closeDB()
         return _channel_id
@@ -139,7 +142,7 @@ class Database:
             # hometokuデータベースを使用
             self.cur.execute("use `hometoku`")
         except Exception as e:
-            print("Error: An error occurred while connecting to the database.\n{0}".format(e))
+            print("Error: An error occurred while connecting to the database.\n'{0}'".format(e))
 
     # DB操作が終わったらカーソルとコネクションを閉じる
     def closeDB(self):
@@ -147,7 +150,7 @@ class Database:
             self.cur.close()
             self.conn.close()
         except Exception as e:
-            print("Error: An error occurred while disconnecting to the database.\n{0}".format(e))
+            print("Error: An error occurred while disconnecting to the database.\n'{0}'".format(e))
 
 
     def debugDB(self):
@@ -171,9 +174,9 @@ class Database:
         self.write_score(_workspace_id, _user_ids, _claps[2])
         print("- 対象人数: 1人 -")
         print("-- 1回目/clap:4 ---")
-        self.write_score(_workspace_id, _user_ids[:0], _claps[0])
+        self.write_score(_workspace_id, _user_ids[:1], _claps[0])
         print("-- 2回目/clap:1 ---")
-        self.write_score(_workspace_id, _user_ids[:0], _claps[1])
+        self.write_score(_workspace_id, _user_ids[:1], _claps[1])
 
         print("Debug: スコアの読み込み")
         self.read_score(_workspace_id, 2)
