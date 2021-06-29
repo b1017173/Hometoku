@@ -1,7 +1,7 @@
 import os
 import datetime
 
-from mysql.connector import connect
+import connect_mysql
 
 
 # Use the package we installed
@@ -10,13 +10,15 @@ import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
 
-from connect_mysql import setClapNum, getClapNum, updateChannelID
 
 # Initializes your app with your bot token and signing secret
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
+
+# データベースのインスタンス生成
+db = connect_mysql.connect_mysql.AccessDB()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
@@ -40,6 +42,7 @@ def dummy(ack):
 def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
     # 入力されたチャンネルIDの取得
+    _workspace_id = "Vocapop"
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _user_id = body["user"]["id"]
     if _channel_id == None:
@@ -47,27 +50,28 @@ def handle_update_channel_submission(ack, say, body, client, view, logger):
     print("channel id: ", _channel_id)
     print("user id: ", _user_id)
 
-    _db = None
+    _db = db
     _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
     if _joined_channel_id == "":
-        uc.setup_channel(say, _channel_id, client, _db)
+        uc.setup_channel(say, _workspace_id, _channel_id, client, _db)
     else:
-        uc.update_channel(say, _channel_id, _joined_channel_id, client, _db)
+        uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, _db)
     hm.view_help_message(client, _user_id, logger)
 
 # チャンネル登録のコマンドのリスナー
 @app.command("/hometoku_set_channel")
 def get_channel_command(ack, say, command, client):
     ack()
+    _workspace_id = "cnbcsm"
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
-    _db = None
+    _db = db
     _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
     if _joined_channel_id == "":
-        uc.setup_channel(say, _channel_id, client, _db)
+        uc.setup_channel(say, _workspace_id, _channel_id, client, _db)
     else:
-        uc.cant_setup_channel(say, _channel_id, _joined_channel_id, _user_id, client)
+        uc.cant_setup_channel(say, _workspace_id, _channel_id, _joined_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -91,7 +95,8 @@ def handle_homeru_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
-    
+
+    _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _workspace_id = body["team"]["id"]
     _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
     _timestamp = datetime.datetime.now()
@@ -103,20 +108,14 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("timestamp: ", _timestamp)
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
+    # 褒めピーポー褒められた回数を増やす関数を実行
+    db.set_clap_num(_targets, _workspace_id, _channel_id, _clap_num)
+
     # メッセージ送信の関数
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing, _prise_quantity)
 
     # DBへの書き込み
-    _test_user = "DOGPG"
-    _test_targets = ["DODDPPD","AAPOO"]
-    _test_workspace_id = "KAKAK"
-    _test_channel_id = "GFFFP"
-    _test_clap_num = 5
-    setClapNum(_targets, _test_workspace_id, _test_channel_id, _test_clap_num)
-    _result = getClapNum("smmdoidoodp")
-    [print(i) for i in _result]
-    updateChannelID(_test_workspace_id, _test_channel_id, "next_channel_id")
     # xx.yyyy(_targets, _prise_quantity)
 
 # Start your app

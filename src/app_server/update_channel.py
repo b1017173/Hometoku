@@ -39,26 +39,26 @@ def failed_join_channel(_joined_channel_id):
 	}
 
 # コマンドによってチャンネルに参加する(参加できるのは1つのチャンネルだけ)
-def update_channel(say, _new_channel_id, _old_channel_id, client, db):
-	exit_channel(_old_channel_id, client, db)
-	setup_channel(say, _new_channel_id, client, db)
+def update_channel(say, _workspace_id, _new_channel_id, _old_channel_id, client, db):
+	exit_channel(_workspace_id, _old_channel_id, client, db)
+	setup_channel(say, _workspace_id, _new_channel_id, client, db)
 
 # チャンネルの参加
-def setup_channel(say, _channel_id, client, db):
+def setup_channel(say, _workspace_id, _channel_id, client, db):
 	_success_message = success_join_channel()
 
 	try:
-		# TODO: db.チャンネル情報の書き込み(_channel_id)
+		db.set_channel_id(_workspace_id, _channel_id)
 		client.conversations_join(channel = _channel_id)
 		say(text = _success_message, channel = _channel_id)
 	except Exception as e:
 		print("Error: Failed to join the channel.\n{0}".format(e))
 
 # チャンネルの退出
-def exit_channel(_channel_id, client, db):
+def exit_channel(_workspace_id, _channel_id, client, db):
 	try:
+		db.delete_channel_id(_workspace_id, _channel_id)
 		client.conversations_leave(channel = _channel_id)
-		# TODO: db.チャンネル情報の消去()
 	except Exception as e:
 		print("Error: Failed to join the channel.\n{0}".format(e))
 
