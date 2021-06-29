@@ -48,10 +48,9 @@ class AccessDB:
 
 
     # 褒められた回数と褒められた人を登録する関数 #
-    def set_clap_num(self, target_id_list, workspase_id, channel_id, claps):
+    def set_clap_num(self, target_id_list, workspase_id, claps):
         self.target_id_list = target_id_list # 褒められた人の変数
         self.workspace_id   = workspase_id   # ワークスペースIDの変数
-        self.channel_id     = channel_id     # チャンネルIDの変数
         self.claps          = claps          # クラップの回数
 
         # コネクションが切れた時に再接続してくれるよう設定
@@ -69,30 +68,13 @@ class AccessDB:
             if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
                 #褒められた人がDBにいない時追加
                 try :
-                    #usersテーブルとchannelテーブルの中でワークスペースidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
-                    _sql = 'select exists(select * from users u INNER join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s and u.user_id = %s)'
-                    self.cur.execute(_sql, (self.workspace_id, home_people))
+                    # userID, workspace_idがusersテーブルになければ追加#
+                    self.cur.execute('select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)', (home_people, self.workspace_id))
+                    if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+                        self.cur.execute('INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)', (home_people, 0, self.workspace_id))
+                        self.conn.commit()
 
-                    #一致するものがない場合は、それぞれのテーブルにデータを追加する。
-                    if(self.cur.fetchone()[0] == 0): # 1:データが存在するとき, 0:データが存在しないとき
-                        print(1)
-                        # channels_id,  workspace_idがchannelsテーブルになければ追加#
-                        self.cur.execute('select exists (select * from channels where channel_id = %s and workspace_id = %s)',(self.channel_id, self.workspace_id))
-                        if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-                            self.cur.execute('INSERT INTO channels (workspace_id, channel_id) VALUES (%s, %s)', (self.workspace_id, self.channel_id))
-                            self.conn.commit()
-
-                        print(2)
-                        # userID, workspace_idがusersテーブルになければ追加#
-                        self.cur.execute('select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)', (home_people, self.workspace_id))
-                        if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-                            self.cur.execute('INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)', (home_people, 0, self.workspace_id))
-                            self.conn.commit()
-
-                        print("データは挿入は成功したよ")
-
-                    else :
-                        print("データは存在するので追加しませんでした。")
+                    print("データは挿入は成功したよ")
 
                 # 挿入する情報が重複した場合のエラー処理:
                 except mysql.connector.errors.IntegrityError:
@@ -211,9 +193,11 @@ class AccessDB:
 # テスト用 #
 test_class = AccessDB()
 
+test_class.set_channel_id("test","NM")
+
 #引数：褒められた人(基本リスト)、ワークスペースID、チャンネルID、褒められ度
 #返り値：なし
-test_class.set_clap_num(["aoiui","docmcm","onnnvn","q88"],"test", "nckncl", 5)
+test_class.set_clap_num(["o","docmcm","onnnvn","q88"],"test", 5)
 
 #引数：褒められた人()、ワークスペースID
 #返り値：指定したワークスペースIDに所属する人の情報(ワークスペースID、チャンネルID、ユーザーID, 褒められ度)を返す。変える順番は、褒められた度をが大きい順
@@ -224,4 +208,4 @@ print(a)
 #返り値：なし
 test_class.delete_channel_id("test", "nckncl")
 
-test_class.set_channel_id("test","NM")
+test_class.set_channel_id("test","CM")

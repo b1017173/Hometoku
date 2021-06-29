@@ -18,7 +18,7 @@ app = App(
 )
 
 # データベースのインスタンス生成
-db = connect_mysql.connect_mysql.AccessDB()
+db = connect_mysql.AccessDB()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
@@ -97,8 +97,7 @@ def handle_homeru_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
-    # チャンネルIDが欲しいset_clap_numを実行するために
-    _channel_id = "" 
+
     _workspace_id = body["team"]["id"]
     _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
     _timestamp = datetime.datetime.now()
@@ -111,7 +110,7 @@ def handle_homeru_submission(ack, body, client, view, logger):
     # _prise_quantity = view["state"]["values"]["blockID"]["actionID"]
     
     # 褒めピーポー褒められた回数を増やす関数を実行
-    db.set_clap_num(_targets, _workspace_id, _channel_id, _clap_num)
+    db.set_clap_num(_targets, _workspace_id, _clap_num)
 
     # メッセージ送信の関数
     # xx.yyyyy(client, logger, _user, _targets, _prise_writing)
