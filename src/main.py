@@ -18,6 +18,7 @@ app = App(
 
 # データベースのインスタンス生成
 db = cm.Database()
+# デバッグ用
 # db.debugDB()
 
 # アプリのDMを開いた時にヘルプを表示
