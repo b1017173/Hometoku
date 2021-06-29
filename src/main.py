@@ -74,7 +74,7 @@ def get_update_channel_command(ack, say, command, client):
     _db = None
     _joined_channel_id = "" # TODO: dbにアクセスしてすでに参加しているチャンネルがあればそれを返す
 
-    if _joined_channel_id == "":  # 参加していないチャンネルでコマンドがよばれた場合
+    if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
         uc.update_channel(say, _channel_id, _joined_channel_id, client, _db)
     else:  # すでに参加しているチャンネルでコマンドがよばれた場合
         uc.send_aleady_exist_message(_channel_id, _user_id, client)
