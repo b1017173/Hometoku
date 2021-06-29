@@ -42,7 +42,8 @@ def dummy(ack):
 def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
     # 入力されたチャンネルIDの取得
-    _workspace_id = "Vocapop"
+    #ワークスペースIDが欲しい
+    _workspace_id = ""
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _user_id = body["user"]["id"]
     if _channel_id == None:
@@ -62,7 +63,8 @@ def handle_update_channel_submission(ack, say, body, client, view, logger):
 @app.command("/hometoku_set_channel")
 def get_channel_command(ack, say, command, client):
     ack()
-    _workspace_id = "cnbcsm"
+    # ワークスペースIDが欲しい
+    _workspace_id = ""
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
@@ -95,8 +97,8 @@ def handle_homeru_submission(ack, body, client, view, logger):
     _user = body["user"]["id"]                                                              # 投稿ユーザ
     _targets = view["state"]["values"]["homepeople"]["select_homepeople"]["selected_users"] # 褒めたい人・チャンネル
     _prise_writing = view["state"]["values"]["homemove"]["input_homemove"]["value"]         # 褒めたいこと
-
-    _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
+    # チャンネルIDが欲しいset_clap_numを実行するために
+    _channel_id = "" 
     _workspace_id = body["team"]["id"]
     _clap_num = view["blocks"][4]["elements"][0]["text"].count("clap")
     _timestamp = datetime.datetime.now()
