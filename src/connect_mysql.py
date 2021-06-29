@@ -69,7 +69,7 @@ class AccessDB:
             if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
                 #褒められた人がDBにいない時追加
                 try :
-                    #usersテーブルとbelongsテーブルの中でidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
+                    #usersテーブルとchannelテーブルの中でワークスペースidが同じものを内部結合し、user_id, workspace_id, channel_idが全部一致するか確認する。
                     _sql = 'select exists(select * from users u INNER join channels c on u.workspace_id = c.workspace_id where u.workspace_id = %s and u.user_id = %s)'
                     self.cur.execute(_sql, (self.workspace_id, home_people))
 
@@ -144,6 +144,7 @@ class AccessDB:
 
         return _result
 
+    # チャンネルIDを削除する関数
     def delete_channel_id(self, workspace_id, channel_id) :
         self.workspace_id = workspace_id
         self.channel_id = channel_id
@@ -159,7 +160,7 @@ class AccessDB:
         self.cur.execute('select exists (select * from channels where workspace_id = %s and channel_id = %s)', (self.workspace_id, self.channel_id))
         
         if self.cur.fetchone()[0] == 1 : # 1:データが存在するとき, 0:データが存在しないとき
-            # channelsテーブルの中で、ワークスペースIDと変える前のチャンネルID(prev_channel_id)が等しい行を変えた後のチャンネルID(next_channel_id)に変更する #
+            # channelsテーブルの中で、チャンネルIDをNULLに変更 #
             self.cur.execute('update channels set channel_id = NULL where channel_id = %s', (self.channel_id, ))
             # 変更をDB側にコミットする
             self.conn.commit()
@@ -188,11 +189,13 @@ class AccessDB:
         self.cur.execute('select exists (select workspace_id from channels where workspace_id = %s)', (self.workspace_id,))
         
         if self.cur.fetchone()[0] == 1 : # 1:データが存在するとき, 0:データが存在しないとき
+            #ワークスペースIDがあるけど、チャンネルIDがない時、NULLのものを置き換える
             self.cur.execute('update channels set channel_id = %s where channel_id is NULL', (self.channel_id,))
             # 変更をDB側にコミットする
             self.conn.commit()
             print("チャンネルIDを設定したよ。")
         else :
+            # 初回登録の際はワークスペースIDとチャンネルIDを登録する。
             # channelsテーブルの中で、ワークスペースIDと変える前のチャンネルID(prev_channel_id)が等しい行を変えた後のチャンネルID(next_channel_id)に変更する #
             self.cur.execute('insert into channels (workspace_id, channel_id) values (%s, %s)', (self.workspace_id, self.channel_id))
             # 変更をDB側にコミットする
@@ -207,6 +210,7 @@ class AccessDB:
 
 # テスト用 #
 test_class = AccessDB()
+
 #引数：褒められた人(基本リスト)、ワークスペースID、チャンネルID、褒められ度
 #返り値：なし
 test_class.set_clap_num(["aoiui","docmcm","onnnvn","q88"],"test", "nckncl", 5)
