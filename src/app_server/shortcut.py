@@ -9,13 +9,13 @@ def view_modal(clap:str):
         },
         "submit": {
             "type": "plain_text",
-            "text": "Submit",
+            "text": "送信",
             "emoji": True
         },
         "type": "modal",
         "close": {
             "type": "plain_text",
-            "text": "Cancel",
+            "text": "キャンセル",
             "emoji": True
         },
         "blocks": [
