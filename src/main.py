@@ -20,6 +20,23 @@ app = App(
 # データベースのインスタンス生成
 db = connect_mysql.AccessDB()
 
+db.set_channel_id("test1","VB")
+
+#引数：褒められた人(基本リスト)、ワークスペースID、チャンネルID、褒められ度
+#返り値：なし
+db.set_clap_num(["o","docmcm","onnnvn","q88"],"test1", 5)
+
+#引数：褒められた人()、ワークスペースID
+#返り値：指定したワークスペースIDに所属する人の情報(ワークスペースID、チャンネルID、ユーザーID, 褒められ度)を返す。変える順番は、褒められた度をが大きい順
+test_result = db.get_clap_num("test1")
+print(test_result)
+
+#引数：ワークスペースID、チャンネルID
+#返り値：なし
+db.delete_channel_id("test1", "VB")
+
+db.set_channel_id("test","AP")
+
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
 def send_help(client, event, logger):
@@ -43,7 +60,7 @@ def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
     # 入力されたチャンネルIDの取得
     #ワークスペースIDが欲しい
-    _workspace_id = ""
+    _workspace_id = body["team"]["id"]
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _user_id = body["user"]["id"]
     if _channel_id == None:
@@ -64,16 +81,33 @@ def handle_update_channel_submission(ack, say, body, client, view, logger):
 def get_channel_command(ack, say, command, client):
     ack()
     # ワークスペースIDが欲しい
-    _workspace_id = ""
+    _workspace_id = command["team_id"]
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
     _db = db
     _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+
     if _joined_channel_id == "":
         uc.setup_channel(say, _workspace_id, _channel_id, client, _db)
     else:
         uc.cant_setup_channel(say, _workspace_id, _channel_id, _joined_channel_id, _user_id, client)
+
+# チャンネル更新のコマンドリスナー
+@app.command("/hometoku_update_channel")
+def get_update_channel_command(ack, say, command, client):
+    ack()
+    _workspace_id = command["team_id"]
+    _channel_id = command["channel_id"] # コマンドがよばれたチャンネルID用の変数
+    _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
+
+    _db = None
+    _joined_channel_id = "" # TODO: dbにアクセスしてすでに参加しているチャンネルがあればそれを返す
+
+    if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
+        uc.update_channel(say, _channel_id, _joined_channel_id, client, _db)
+    else:  # すでに参加しているチャンネルでコマンドがよばれた場合
+        uc.send_aleady_exist_message(_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")

@@ -63,31 +63,26 @@ class AccessDB:
         # 褒めピーポーの追加 #
 
         for home_people in self.target_id_list:
-            # 褒めピーポーがDBに居るかいないかをチェックする
-            self.cur.execute('select exists (select * from users where workspace_id = %s and user_id = %s)',(self.workspace_id, home_people))
-            if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+            try :
+                # userID, workspace_idがusersテーブルになければ追加#
+                print(1)
+
                 #褒められた人がDBにいない時追加
-                try :
-                    # userID, workspace_idがusersテーブルになければ追加#
-                    self.cur.execute('select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)', (home_people, self.workspace_id))
-                    if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
-                        self.cur.execute('INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)', (home_people, 0, self.workspace_id))
-                        self.conn.commit()
-
-                    print("データは挿入は成功したよ")
-
-                # 挿入する情報が重複した場合のエラー処理:
-                except mysql.connector.errors.IntegrityError:
-                    print("挿入する情報が重複しています。")
+                self.cur.execute('select exists (select user_id, workspace_id from users where user_id = %s and workspace_id = %s)', (home_people, self.workspace_id))
+                if self.cur.fetchone()[0] == 0 : # 1:データが存在するとき, 0:データが存在しないとき
+                    print(2)
+                    self.cur.execute('INSERT INTO users (user_id, price, workspace_id) VALUES (%s, %s, %s)', (home_people, 0, self.workspace_id))
+                    self.conn.commit()
 
                 print("褒めピーポーがDBにいなかったので、新しく追加したよ")
+                
+                self.cur.execute('update users set price = price + 1 + %s where user_id = %s and workspace_id = %s', (self.claps, home_people, self.workspace_id))
+                self.conn.commit()
+                print("homeポイント追加したよ")
 
-
-            self.cur.execute('update users set price = price + 1 + %s where user_id = %s and workspace_id = %s', (self.claps, home_people, self.workspace_id))
-            self.conn.commit()
-            print("homeポイント追加したよ")
-
-        print("set_clap_numが完了したよ")
+            # 挿入する情報が重複した場合のエラー処理:
+            except mysql.connector.errors.IntegrityError as e:
+                print(e)
 
         # DB操作が終わったらカーソルとコネクションを閉じる
         self.cur.close()
@@ -206,6 +201,6 @@ print(a)
 
 #引数：ワークスペースID、チャンネルID
 #返り値：なし
-test_class.delete_channel_id("test", "nckncl")
+test_class.delete_channel_id("test", "NM")
 
-test_class.set_channel_id("test","CM")
+test_class.set_channel_id("test","uotp")
