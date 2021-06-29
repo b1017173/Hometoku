@@ -192,3 +192,7 @@ class Database:
 
         print("Debug: チャンネルIDの取得(チャンネル変更後)")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id_updated)
+
+        self.cur.excute("DELETE FROM users")
+        self.cur.excute("DELETE FROM channnels")
+        self.conn.commit()
