@@ -91,7 +91,7 @@ def get_update_channel_command(ack, say, command, client):
     if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
         uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
     else:  # すでに参加しているチャンネルでコマンドがよばれた場合
-        uc.send_aleady_exist_message(_channel_id, _user_id, client)
+        uc.cant_setup_channel(_joined_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -132,7 +132,7 @@ def handle_homeru_submission(ack, say, body, view, logger):
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
     
-    sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, logger) # modalに入力された内容をSlackで表示させる
+    sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
 if __name__ == "__main__":

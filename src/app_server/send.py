@@ -2,9 +2,8 @@ import app_server.positive_phrase as ph
 import database.connect_mysql as cm
 
 #  modalに入力された内容をSlackで表示させる
-def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, logger):
+def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, db, logger):
 	_claps:str = ""
-	db = cm.Database()
 	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
 
 	# 拍手数の数だけ:clap:を追加
