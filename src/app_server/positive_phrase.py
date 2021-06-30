@@ -31,6 +31,7 @@ def random_positive(targets:list, prise_writing:str):
 
     return _positive_phrase_list[random.randrange(0,len(_positive_phrase_list))] 
 
+# gifのURLをランダムで1つ返す
 def random_gif_url():
     _gif_url_list = [
         "https://tenor.com/view/omg-simon-cowell-americas-got-talent-oh-my-wide-eyes-gif-22145587",
