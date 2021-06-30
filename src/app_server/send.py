@@ -2,7 +2,7 @@ import app_server.positive_phrase as ph
 import database.connect_mysql as cm
 
 #  modalに入力された内容をSlackで表示させる
-def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_num, logger):
+def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, logger):
 	_claps:str = ""
 	db = cm.Database()
 	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
@@ -12,9 +12,9 @@ def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_n
 		_claps += ":clap:"
 
 	try:
-		client.chat_postMessage(
-			channel=_channel_id,
-        	blocks=[
+		say(
+			channel = _channel_id,
+			blocks = [
 				{
 					"type": "header",
 					"text": {
@@ -84,7 +84,8 @@ def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_n
 						"text": "これからも頑張ってね！ :wave:"
 					}
 				}			
-			]
-		)	
+			],
+			text = f":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: " # 通知バナーの内容
+		)
 	except Exception as e:
 		logger.error(f"Error posting praise message: {e}")

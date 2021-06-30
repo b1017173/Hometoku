@@ -163,7 +163,7 @@ class Database:
 
         print("Debug: チャンネルの登録")
         self.set_channel_id(_workspace_id, _channel_id)
-'''
+
         print("Debug: チャンネルIDの取得")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id)
         print("Debug: スコアの書き込み")
@@ -192,4 +192,3 @@ class Database:
 
         print("Debug: チャンネルIDの取得(チャンネル変更後)")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id_updated)
-        '''

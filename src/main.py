@@ -108,7 +108,7 @@ def countup_prise(ack, body, client):
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
-def handle_homeru_submission(ack, body, client, view, logger):
+def handle_homeru_submission(ack, say, body, client, view, logger):
     # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
@@ -125,7 +125,7 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
     
-    sd.view_praise_message(client, _workspace_id, _targets, _prise_writing, _clap_num, logger) # modalに入力された内容をSlackで表示させる
+    sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, logger) # modalに入力された内容をSlackで表示させる
 
     # DBへの書き込み
     # xx.yyyy(_targets, _prise_quantity)
