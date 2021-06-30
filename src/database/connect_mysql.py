@@ -155,8 +155,8 @@ class Database:
 
 
     def debug_db(self):
-        _workspace_id = "T024LUY17JP"
-        _channel_id = "C026DHW2A2G"
+        _workspace_id = "WORKSPACEID"# デバッグ用："T024LUY17JP"
+        _channel_id = "CHANNELID"# デバッグ用："C026DHW2A2G"
         _channel_id_updated = "MEGACHANNELID"
         _user_ids = ["USER1", "USER2", "USER3"]
         _claps = [4, 1, 78]
