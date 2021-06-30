@@ -1,5 +1,8 @@
 # ランキングデータを基にランキングメッセージの生成・送信
 import datetime
+import schedule
+import time
+
 def view_ranking_message(client, channel_id, ranking_list):
 	_dt_now = datetime.datetime.now()
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
@@ -16,7 +19,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 			"type": "section",
 			"text": {
 				"type": "plain_text",
-				"text": "{0}月たくさんホメられたあなたを紹介します！".format(_dt_now.month-1)
+				"text": "{0}月にたくさんホメられたあなたを表彰します！".format(_dt_now.month-1)
 			}
 		},
 		{
@@ -35,7 +38,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "*{0}位 <@{1}>*\n{2} ホメられた回数 {3} ホメ\n".format(rank+1, ranking_list[rank][1], _clap_count, _score_simbol)
+					"text": "{0}*{1}位 <@{2}>*{3}\nホメられた回数 {4} ホメ\n\n".format(_clap_count, rank+1, ranking_list[rank][1], _clap_count, _score_simbol)
 				}
 			}
 		_view_blocks.append(_view_ranking)
@@ -66,3 +69,9 @@ def all_ws_post_ranking(db):
 	for workspace in _workspaces:
 		_client = ""
 		post_ranking(_client, db)
+
+def post_permonth_ranking(client, db, range):
+	schedule.every(1).minutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+	while True:
+		schedule.run_pending()
+		time.sleep(1)

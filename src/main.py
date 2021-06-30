@@ -4,6 +4,8 @@ import database.connect_mysql as cm
 import schedule
 import time
 import datetime
+import threading
+
 
 # Use the package we installed
 from slack_bolt import App
@@ -137,13 +139,22 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("timestamp: ", _timestamp)
 
 
-# 毎月1日に1回ランキングをポスト
+"""# 毎月1日に1回ランキングをポスト
 if datetime.datetime.now().day == 1:
     schedule.every(1).day.do(mr.post_ranking, app.client, db, 3) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        time.sleep(1)"""
+
+
+"""schedule.every(1).minutes.do(mr.post_ranking, app.client, db, 3) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+while True:
+    schedule.run_pending()
+    time.sleep(1)"""
 
 # Start your app
 if __name__ == "__main__":
+    t1 = threading.Thread(target=mr.post_permonth_ranking, args=(app.client, db, 3))
+    t1.start()
     app.start(port=int(os.environ.get("PORT", 3000)))
+
