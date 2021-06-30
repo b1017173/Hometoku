@@ -8,8 +8,10 @@ from slack_bolt import App
 import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
+import app_server.send as sd
 
 # Initializes your app with your bot token and signing secret
+
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
@@ -89,7 +91,7 @@ def get_update_channel_command(ack, say, command, client):
     if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
         uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
     else:  # すでに参加しているチャンネルでコマンドがよばれた場合
-        uc.send_aleady_exist_message(_channel_id, _user_id, client)
+        uc.cant_setup_channel(_joined_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
@@ -113,7 +115,7 @@ def countup_prise(ack, body, client):
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
-def handle_homeru_submission(ack, body, client, view, logger):
+def handle_homeru_submission(ack, say, body, view, logger):
     # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
@@ -129,6 +131,8 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
+    
+    sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
 if __name__ == "__main__":
