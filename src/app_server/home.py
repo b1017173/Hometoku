@@ -1,6 +1,7 @@
 # ホームタブに表示するヘルプのビュー
-def view_help_message(client, _user_id, logger):
-    _channel_id = "未登録"  # TODO: データベースにアクセスして登録チャンネルを取得する
+def view_help_message(client, _user_id, channel_id, logger):
+    _channel_id = "<#{0}>".format(channel_id) if channel_id != "" else "未登録"
+        
     try:
         client.views_publish(
             user_id = _user_id,
