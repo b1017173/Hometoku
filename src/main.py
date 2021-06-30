@@ -92,9 +92,14 @@ def get_update_channel_command(ack, say, command, client):
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
 def open_modal_homeru(ack, shortcut, client):
-    # リクエストを受け付け
     ack()
-    sc.view_modal_from_shortcut(client, shortcut)
+
+    # チャンネルの登録の有無に合わせたモーダル表示
+    _channel_id = db.get_channel_id()
+    if _channel_id != "":
+        sc.view_modal_from_shortcut(client, shortcut)
+    else:
+        sc.view_modal_not_set_channel(client, shortcut)
 
 # 'prise_countup' アクションをリッスン(褒めたい度の更新)
 @app.action("prise_countup")

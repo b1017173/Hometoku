@@ -101,3 +101,38 @@ def update_modal_from_countup(body, client):
         hash = body["view"]["hash"],
         view = view_modal(_clap)
     )
+
+# チャンネルの登録がされていない状態で，ホメる！が押された時のモーダル
+def view_modal_not_set_channel(client, shortcut):
+    client.views_open(
+        trigger_id = shortcut["trigger_id"],
+        view = {
+            "type": "modal",
+            "title": {
+                "type": "plain_text",
+                "text": "チャンネルの登録がされていません",
+                "emoji": True
+            },
+            "close": {
+                "type": "plain_text",
+                "text": "確認",
+                "emoji": True
+            },
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*ホメる！* を使うためにはホメとくをチャンネルに登録する必要があります．"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "チャンネルの登録は，登録したいチャンネルで `/hometoku_set_channel` と入力することで行えます．\nチャンネルの登録の詳細はホメとくとのDMのホームタブから確認できます．"
+                    }
+                }
+            ]
+        }
+    )
