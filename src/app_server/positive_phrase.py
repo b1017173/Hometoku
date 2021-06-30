@@ -30,3 +30,19 @@ def random_positive(targets:list, prise_writing:str):
     ]
 
     return _positive_phrase_list[random.randrange(0,len(_positive_phrase_list))] 
+
+def random_gif_url():
+    _gif_url_list = [
+        "https://tenor.com/view/omg-simon-cowell-americas-got-talent-oh-my-wide-eyes-gif-22145587",
+        "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
+        "https://tenor.com/view/screaming-cat-staring-ahh-whaa-gif-18345319",
+        "https://tenor.com/view/kitty-highkitten-mdmacat-cat-happykitty-gif-6198981",
+        "https://tenor.com/view/hug-love-dog-dogs-bestfriend-gif-5746206",
+        "https://tenor.com/view/dogs-cute-adorable-gif-13995631",
+        "https://tenor.com/view/spongebob-squarepants-dance-happydance-gif-5027512",
+        "https://tenor.com/view/my-happpy-dance-cute-shade-gif-15567340",
+        "https://tenor.com/view/dancing-dance-twerk-jump-street-gif-5840882",
+        "https://tenor.com/view/happy-mochi-gif-20079211",
+    ]
+
+    return _gif_url_list[random.randrange(0, len(_gif_url_list))]
