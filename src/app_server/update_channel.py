@@ -51,8 +51,8 @@ def aleady_exist_channel(_user_id):
 	]
 # 参加チャンネルを更新
 def update_channel(say, _workspace_id, _new_channel_id, _old_channel_id, client, db):
-	exit_channel(_workspace_id, _old_channel_id, client)
-	setup_channel(_workspace_id, say, _new_channel_id, client, db)
+	exit_channel(_old_channel_id, client)
+	setup_channel(say, _workspace_id,  _new_channel_id, client, db)
 
 # チャンネルの参加(参加できるのは1つだけ)
 def setup_channel(say, _workspace_id, _channel_id, client, db):
@@ -65,7 +65,7 @@ def setup_channel(say, _workspace_id, _channel_id, client, db):
 		print("Error: Failed to join the channel.\n{0}".format(e))
 
 # チャンネルの退出
-def exit_channel(_workspace_id, _channel_id, client):
+def exit_channel(_channel_id, client):
 	try:
 		client.conversations_leave(channel = _channel_id)
 	except Exception as e:

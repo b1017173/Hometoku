@@ -18,13 +18,15 @@ app = App(
 # データベースのインスタンス生成
 db = cm.Database()
 # デバッグ用
-# db.debug_db()
+db.debug_db()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
 def send_help(client, event, logger):
     _user_id = event["user"]
-    hm.view_help_message(client, _user_id, logger)
+    _workspace_id = event["view"]["team_id"]
+    _channel_id = db.get_channel_id(_workspace_id)
+    hm.view_help_message(client, _user_id, _channel_id, logger)
 
 # ホームタブのチャンネル更新ボタンが押された時にモーダル表示
 @app.action("update_channel")
@@ -56,7 +58,7 @@ def handle_update_channel_submission(ack, say, body, client, view, logger):
         uc.setup_channel(say, _workspace_id, _channel_id, client, db)
     else:
         uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
-    hm.view_help_message(client, _user_id, logger)
+    hm.view_help_message(client, _user_id, _channel_id, logger)
 
 # チャンネル登録のコマンドのリスナー
 @app.command("/hometoku_set_channel")
@@ -85,7 +87,7 @@ def get_update_channel_command(ack, say, command, client):
     _joined_channel_id = db.get_channel_id(_workspace_id)
 
     if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
-        uc.update_channel(say, _channel_id, _joined_channel_id, client, db)
+        uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
     else:  # すでに参加しているチャンネルでコマンドがよばれた場合
         uc.send_aleady_exist_message(_channel_id, _user_id, client)
 
@@ -95,7 +97,8 @@ def open_modal_homeru(ack, shortcut, client):
     ack()
 
     # チャンネルの登録の有無に合わせたモーダル表示
-    _channel_id = db.get_channel_id()
+    _workspace_id = shortcut["team"]["id"]
+    _channel_id = db.get_channel_id(_workspace_id)
     if _channel_id != "":
         sc.view_modal_from_shortcut(client, shortcut)
     else:

@@ -107,6 +107,7 @@ def view_modal_not_set_channel(client, shortcut):
     client.views_open(
         trigger_id = shortcut["trigger_id"],
         view = {
+            "callback_id": "modal_not_set_channel",
             "type": "modal",
             "title": {
                 "type": "plain_text",
