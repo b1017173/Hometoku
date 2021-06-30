@@ -115,7 +115,7 @@ def countup_prise(ack, body, client):
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
-def handle_homeru_submission(ack, say, body, client, view, logger):
+def handle_homeru_submission(ack, say, body, view, logger):
     # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
