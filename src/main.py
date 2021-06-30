@@ -11,7 +11,6 @@ import app_server.home as hm
 import app_server.send as sd
 
 # Initializes your app with your bot token and signing secret
-
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
