@@ -2,12 +2,8 @@ import app_server.positive_phrase as ph
 
 #  modalに入力された内容をSlackで表示させる
 def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, db, logger):
-	_claps:str = ""
+	_claps:str = ":clap:" * clup_num
 	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
-
-	# 拍手数の数だけ:clap:を追加
-	for i in range(clup_num):
-		_claps += ":clap:"
 
 	try:
 		say(
