@@ -16,10 +16,11 @@ def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_n
 			channel=_channel_id,
         	blocks=[
 				{
-					"type": "section",
+					"type": "header",
 					"text": {
-						"type": "mrkdwn",
-						"text": ph.random_positive(targets_id, praise_writing)
+						"type": "plain_text",
+						"text": ":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: ",
+						"emoji": True
 					}
 				},
 				{
@@ -29,7 +30,17 @@ def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_n
 					"type": "section",
 					"text": {
 						"type": "mrkdwn",
-						"text": ":clap:ほめクラップ:clap:"
+						"text": ph.random_positive(targets_id,praise_writing)
+					}
+				},
+				{
+					"type": "divider"
+				},
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "*今回のホメたい度は....*"
 					}
 				},
 				{
@@ -40,15 +51,39 @@ def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_n
 					}
 				},
 				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "すごいや！！！ :tada:"
+					}
+				},
+				{
+					"type": "divider"
+				},
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "これは僕からのプレゼントだよ！"
+					}
+				},
+				{
 					"type": "image",
 					"title": {
 						"type": "plain_text",
 						"text": "homehome",
 						"emoji": True
 					},
-					"image_url": "https://tenor.com/bfiRs.gif",
+					"image_url": "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
 					"alt_text": "marg"
-				}
+				},
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "これからも頑張ってね！ :wave:"
+					}
+				}			
 			]
 		)	
 	except Exception as e:
