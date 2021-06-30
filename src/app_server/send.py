@@ -1,18 +1,15 @@
 import app_server.positive_phrase as ph
+import database.connect_mysql as cm
 
 #  modalに入力された内容をSlackで表示させる
-def view_praise_message(client, targets_id, praise_writing, clup_num, logger):
-	_targets_id = targets_id
-	_praise_writing = praise_writing
-	_clup_num = clup_num
+def view_praise_message(client, workspace_id, targets_id, praise_writing, clup_num, logger):
 	_claps:str = ""
-	_channel_id = "C026DHW2A2G" #Botが参加しているチャンネルID testチャンネル:C025BBH57LN random:C024ZBFDEU9 test_kai：C026DHW2A2G
+	db = cm.Database()
+	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
 
 	# 拍手数の数だけ:clap:を追加
-	for i in range(_clup_num):
+	for i in range(clup_num):
 		_claps += ":clap:"
-
-	# TODO: DBからBotが参加しているチャンネルIDを持ってきて変数_channel_idを変更する
 
 	try:
 		client.chat_postMessage(
@@ -22,7 +19,7 @@ def view_praise_message(client, targets_id, praise_writing, clup_num, logger):
 					"type": "section",
 					"text": {
 						"type": "mrkdwn",
-						"text": ph.random_positive(_targets_id, _praise_writing)
+						"text": ph.random_positive(targets_id, praise_writing)
 					}
 				},
 				{
