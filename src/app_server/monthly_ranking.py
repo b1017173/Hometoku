@@ -1,6 +1,5 @@
 # ランキングデータを基にランキングメッセージの生成・送信
 import datetime
-from os import register_at_fork
 import time
 
 def view_ranking_message(client, channel_id, ranking_list):
