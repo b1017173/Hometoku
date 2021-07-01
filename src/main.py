@@ -1,8 +1,6 @@
 import os
 import datetime
 import database.connect_mysql as cm
-import schedule
-import time
 import datetime
 import threading
 
@@ -26,7 +24,7 @@ app = App(
 # データベースのインスタンス生成
 db = cm.Database()
 # デバッグ用
-db.debug_db()
+# db.debug_db()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
@@ -139,22 +137,9 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("timestamp: ", _timestamp)
 
 
-"""# 毎月1日に1回ランキングをポスト
-if datetime.datetime.now().day == 1:
-    schedule.every(1).day.do(mr.post_ranking, app.client, db, 3) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
-    while True:
-        schedule.run_pending()
-        time.sleep(1)"""
-
-
-"""schedule.every(1).minutes.do(mr.post_ranking, app.client, db, 3) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
-while True:
-    schedule.run_pending()
-    time.sleep(1)"""
-
 # Start your app
 if __name__ == "__main__":
-    t1 = threading.Thread(target=mr.post_permonth_ranking, args=(app.client, db, 3))
-    t1.start()
+    auto_post_ranking = threading.Thread(target=mr.post_permonth_ranking, args=(app.client, db, 3))
+    auto_post_ranking.start()
     app.start(port=int(os.environ.get("PORT", 3000)))
 

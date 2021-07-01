@@ -8,12 +8,9 @@ def view_ranking_message(client, channel_id, ranking_list):
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
 	_view_blocks = [
 		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "\ﾄﾞﾝﾄﾞﾝﾊﾟﾁﾊﾟﾁ/  月間ホメられたで賞  \ﾄﾞﾝﾄﾞﾝﾊﾟﾁﾊﾟﾁ/",
-				"emoji": True
-			}
+			"type": "image",
+			"image_url": "https://cdn-ak.f.st-hatena.com/images/fotolife/s/sizimi0527/20210701/20210701201604.png",
+			"alt_text": "home_award"
 		},
 		{
 			"type": "section",
@@ -26,6 +23,20 @@ def view_ranking_message(client, channel_id, ranking_list):
 			"type": "divider"
 		}
 	]
+
+	# 感謝文作成
+	_view_thanks = [
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "ホメとくを使ってくれてありがとう！来月もガンガン褒めてくれよな:fire:"
+			}
+		}
+		]
 
 	for rank in range(len(ranking_list)):
 		# viewに付け足されるランキング(最大1位2位3位の3回増やす)
@@ -42,6 +53,9 @@ def view_ranking_message(client, channel_id, ranking_list):
 				}
 			}
 		_view_blocks.append(_view_ranking)
+
+	for map in _view_thanks :
+		_view_blocks.append(map) # 最後に感謝文追加
 
 	try:
 		client.chat_postMessage(
@@ -63,6 +77,7 @@ def post_ranking(client, db, range):
 
 	view_ranking_message(client, _channel_id, _ranking_list)
 
+# 複数ワークスペースに送る場合の関数(未実装)
 def all_ws_post_ranking(db):
 	_workspaces = []	# TODO: _workspaces = db.ワークスペースリストの取得()
 
@@ -70,8 +85,17 @@ def all_ws_post_ranking(db):
 		_client = ""
 		post_ranking(_client, db)
 
+# 毎月自動投稿する関数
 def post_permonth_ranking(client, db, range):
-	schedule.every(1).minutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+	if datetime.datetime.now().day == 1:
+		schedule.every(1).day.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+		while True:
+			schedule.run_pending()
+			time.sleep(1)
+
+	""" デバッグ用毎分投稿
+	schedule.every(1).day.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
 	while True:
 		schedule.run_pending()
 		time.sleep(1)
+		"""

@@ -4,8 +4,7 @@ class Database:
     def __init__(self):
         self.conn = mysql.connector.connect(
             host = "localhost",
-            port = "3306",
-            user = "root"
+            port = "3306"
         )
         
         self.open_db(True)
@@ -183,13 +182,13 @@ class Database:
         self.read_score(_workspace_id, 2)
 
         print("Debug: スコアのリセット")
-        #self.reset_score()
+        self.reset_score()
 
         print("Debug: スコアの読み込み(リセット後)")
         self.read_score(_workspace_id, 3)
 
         print("Debug: 登録チャンネルの書き換え")
-        #self.set_channel_id(_workspace_id, _channel_id_updated)
+        self.set_channel_id(_workspace_id, _channel_id_updated)
 
         print("Debug: チャンネルIDの取得(チャンネル変更後)")
-        #print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id_updated)
+        print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id_updated)
