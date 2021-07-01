@@ -1,4 +1,4 @@
-import app_server.random as ph
+import app_server.random_contents as rc
 
 #  modalに入力された内容をSlackで表示させる
 def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, db, logger):
@@ -24,7 +24,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 					"type": "section",
 					"text": {
 						"type": "mrkdwn",
-						"text": ph.random_positive(targets_id,praise_writing)
+						"text": rc.random_positive(targets_id,praise_writing)
 					}
 				},
 				{
@@ -68,7 +68,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 						"text": "homehome",
 						"emoji": True
 					},
-					"image_url": ph.random_gif_url(),
+					"image_url": rc.random_gif_url(),
 					"alt_text": "gif"
 				},
 				{
