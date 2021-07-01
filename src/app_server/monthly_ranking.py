@@ -35,7 +35,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"text": "ホメとくを使ってくれてありがとう！来月もガンガン褒めてくれよな:fire:"
 			}
 		}
-		]
+	]
 
 	for rank in range(len(ranking_list)):
 		# viewに付け足されるランキング(最大1位2位3位の3回増やす)
@@ -59,7 +59,8 @@ def view_ranking_message(client, channel_id, ranking_list):
 	try:
 		client.chat_postMessage(
 			channel = channel_id,
-			blocks = _view_blocks
+			blocks = _view_blocks,
+			text = "月間ランキングが投稿されました！"
 		)
 	except Exception as e:
 		print("Error: sending ranking message is Failed, {0}".format(e))
