@@ -1,0 +1,109 @@
+import app_server.positive_phrase as ph
+
+#  modalに入力された内容をSlackで表示させる
+def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, db, logger):
+	_claps:str = ":clap:" * clup_num
+	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
+
+	try:
+		say(
+			channel = _channel_id,
+			blocks = [
+				{
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": ":confetti_ball::confetti_ball::confetti_ball::confetti_ball::confetti_ball:    *ホメられ速報*    :confetti_ball::confetti_ball::confetti_ball::confetti_ball::confetti_ball:"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": ph.random_positive(targets_id,praise_writing)
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "今回のホメたい度は...."
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "＼／＼／＼／＼／＼／＼／＼／＼／＼／＼／＼／"
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": _claps
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "／＼／＼／＼／＼／＼／＼／＼／＼／＼／＼／＼"
+                    },
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "すごいや！！！ :tada:"
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "これは僕からのプレゼントだよ！"
+                    }
+                },
+                {
+                    "type": "image",
+                    "title": {
+                        "type": "plain_text",
+                        "text": "homehome",
+                        "emoji": True
+                    },
+                    "image_url": "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
+                    "alt_text": "gif"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "これからも頑張ってね！ :wave:"
+                	}
+                },
+                {
+                    "type": "divider"
+                }
+			],
+			text = f":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: " # 通知バナーの内容
+		)
+	except Exception as e:
+		logger.error(f"Error posting praise message: {e}")

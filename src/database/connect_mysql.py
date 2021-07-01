@@ -156,7 +156,7 @@ class Database:
 
 
     def debug_db(self):
-        _workspace_id = "WORKSPACEID"
+        _workspace_id ="WORKSPACEID"
         _channel_id = "CHANNELID"
         _channel_id_updated = "MEGACHANNELID"
         _user_ids = ["USER1", "USER2", "USER3"]
@@ -167,7 +167,6 @@ class Database:
 
         print("Debug: チャンネルIDの取得")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id)
-
         print("Debug: スコアの書き込み")
         print("- 対象人数: 3人 -")
         print("-- 1回目/clap:4 ---")
