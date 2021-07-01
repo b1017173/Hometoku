@@ -10,21 +10,25 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 			channel = _channel_id,
 			blocks = [
 				{
-                    "type": "divider"
+                	"type": "section",
+                	"text": {
+                    	"type": "plain_text",
+                    	"text": "========================================"
+                	}
                 },
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": ":confetti_ball::confetti_ball::confetti_ball::confetti_ball::confetti_ball:    *ホメられ速報*    :confetti_ball::confetti_ball::confetti_ball::confetti_ball::confetti_ball:"
+                        "text": ":confetti_ball::confetti_ball::confetti_ball::confetti_ball:    *ホメられ速報*    :confetti_ball::confetti_ball::confetti_ball::confetti_ball:"
                     }
                 },
-                {
-                    "type": "section",
-                    "text": {
+				{
+                	"type": "section",
+                	"text": {
                         "type": "plain_text",
-                        "text": "■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□"
-                    }
+                        "text": "☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…"
+                	}
                 },
                 {
                     "type": "section",
@@ -37,7 +41,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
                     "type": "section",
                     "text": {
                         "type": "plain_text",
-                        "text": "■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□"
+                        "text": "☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…☆…"
                     }
                 },
                 {
@@ -83,16 +87,6 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
                     }
                 },
                 {
-                    "type": "image",
-                    "title": {
-                        "type": "plain_text",
-                        "text": "homehome",
-                        "emoji": True
-                    },
-                    "image_url": "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
-                    "alt_text": "gif"
-                },
-                {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
@@ -100,7 +94,11 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
                 	}
                 },
                 {
-                    "type": "divider"
+                    "type": "section",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "========================================"
+                    }
                 }
 			],
 			text = f":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: " # 通知バナーの内容
