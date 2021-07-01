@@ -59,6 +59,6 @@ def cant_setup_channel(_joined_channel_id, _user_id, client):
 
 	try:
 		# コマンドを読んだ人にしか見えないメッセージを送信
-		client.chat_postEphemeral(channel = _joined_channel_id, user = _user_id, blocks = _failed_message)
+		client.chat_postEphemeral(channel = _joined_channel_id, user = _user_id, blocks = _failed_message, text = _failed_message)
 	except Exception as e:
 		print("Error: Failed to join the channel.\n{0}".format(e))

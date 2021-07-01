@@ -101,7 +101,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
                     }
                 }
 			],
-			text = f":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: " # 通知バナーの内容
+			text = f"ホメられ速報" # 通知バナーの内容
 		)
 	except Exception as e:
 		logger.error(f"Error posting praise message: {e}")
