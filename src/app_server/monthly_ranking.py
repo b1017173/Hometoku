@@ -41,10 +41,10 @@ def view_ranking_message(client, channel_id, ranking_list):
 	for rank in range(len(ranking_list)):
 		# viewに付け足されるランキング(最大1位2位3位の3回増やす)
 		_clap_count = ":clap:" * (3 - rank)
-		_score_simbol_list = list(str(ranking_list[rank][2]))#桁ごとに分離して配列に格納
-		_score_simbol = ""
-		for digit in _score_simbol_list:
-			_score_simbol += ":{0}:".format(_int_to_english[int(digit)])
+		_score_symbol_list = list(str(ranking_list[rank][2]))#桁ごとに分離して配列に格納
+		_score_symbol = ""
+		for digit in _score_symbol_list:
+			_score_symbol += ":{0}:".format(_int_to_english[int(digit)])
 		_view_ranking =  {
 				"type": "section",
 				"text": {
@@ -70,12 +70,8 @@ def post_ranking(client, db, range):
 	_workspace_id = _team_info["team"]["id"]
 	_channel_id = db.get_channel_id(_workspace_id)	# TODO: _channel_id = db.チャンネルIDの取得(_workspace_id)
 	_ranking_list = db.read_score(_workspace_id,range)	# TODO: _ranking_list = db.ランキングリストの取得(_workspace_id, range = 3)
-
-	# デバッグ用
-	#_channel_id = "C026DHW2A2G"			# workspace_idとchannel_idのリスト
-	#_ranking_list = [[_workspace_id, "U024LNTCHR8", "5"]] # ワークスペース毎の褒められランキングのリスト(1で抽出されたやつ)
-
 	view_ranking_message(client, _channel_id, _ranking_list)
+	db.reset_score()
 
 # 複数ワークスペースに送る場合の関数(未実装)
 def all_ws_post_ranking(db):
@@ -87,15 +83,18 @@ def all_ws_post_ranking(db):
 
 # 毎月自動投稿する関数
 def post_permonth_ranking(client, db, range):
-	if datetime.datetime.now().day == 1:
-		schedule.every(1).day.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
-		while True:
-			schedule.run_pending()
-			time.sleep(1)
+	_day_to_seconds = 3600 * 24
 
-	""" デバッグ用毎分投稿
 	schedule.every(1).day.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
 	while True:
-		schedule.run_pending()
-		time.sleep(1)
+		if datetime.datetime.now().day == 1:
+			schedule.run_pending()
+			time.sleep(_day_to_seconds)
+
+	""" デバッグ用毎分投稿 (使う時は上の schedule.every より下をコメントアウトしてね)
+	schedule.every(1).mitutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+	while True:
+		if datetime.datetime.now().day == 1:
+			schedule.run_pending()
+			time.sleep(1)
 		"""

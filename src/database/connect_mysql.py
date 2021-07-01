@@ -159,7 +159,7 @@ class Database:
         _workspace_id ="WORKSPACEID"
         _channel_id = "CHANNELID"
         _channel_id_updated = "MEGACHANNELID"
-        _user_ids = ["U024LNN7WEN", "U024LNTCHR8", "U024HLKV85B"]
+        _user_ids = ["USER1", "USER2", "USER3"]
         _claps = [4, 1, 78]
 
         print("Debug: チャンネルの登録")
