@@ -130,7 +130,7 @@ def handle_homeru_submission(ack, say, body, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
-    
+
     sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
