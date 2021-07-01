@@ -1,6 +1,6 @@
 # ランキングデータを基にランキングメッセージの生成・送信
 import datetime
-import schedule
+from os import register_at_fork
 import time
 
 def view_ranking_message(client, channel_id, ranking_list):
@@ -66,11 +66,19 @@ def view_ranking_message(client, channel_id, ranking_list):
 		print("Error: sending ranking message is Failed, {0}".format(e))
 
 def post_ranking(client, db, range):
+	_channel_id = ""
+
 	_team_info = client.team_info()
 	_workspace_id = _team_info["team"]["id"]
 	_channel_id = db.get_channel_id(_workspace_id)	# TODO: _channel_id = db.チャンネルIDの取得(_workspace_id)
 	_ranking_list = db.read_score(_workspace_id,range)	# TODO: _ranking_list = db.ランキングリストの取得(_workspace_id, range = 3)
-	view_ranking_message(client, _channel_id, _ranking_list)
+
+	if(_channel_id != ""):
+		view_ranking_message(client, _channel_id, _ranking_list)
+		db.reset_score()
+	else:
+		print("channel is not setting")
+
 
 # 複数ワークスペースに送る場合の関数(未実装)
 def all_ws_post_ranking(db):
@@ -84,7 +92,6 @@ def all_ws_post_ranking(db):
 def post_permonth_ranking(client, db, range):
 	_date = datetime.datetime.now()				# 今の時間を格納
 	_expected_date = datetime.datetime.now()	# 来月の予定日を格納
-	schedule.every(1).seconds.do(post_ranking, client, db, range)
 	while True:
 		# 来月のついたちの時間型を取得
 		if _date.month != 12:
@@ -105,10 +112,3 @@ def post_permonth_ranking(client, db, range):
 		time.sleep(_timedelta.total_seconds()+1)
 		post_ranking(client, db, range)
 		_date = _expected_date	# 今月の時間型を更新
-		
-
-	"""デバッグ用毎分投稿 (使う時は関数の上の _date = より下をコメントアウトしてね)
-	schedule.every(1).minutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
-	while True:
-		schedule.run_pending()
-		time.sleep(1)"""
