@@ -49,7 +49,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "{0}*{1}位 <@{2}>*{3}\nホメられた回数 {4} ホメ\n\n".format(_clap_count, rank+1, ranking_list[rank][1], _clap_count, _score_simbol)
+					"text": "{0}*{1}位 <@{2}>*{3}\nホメられた回数 {4} ホメ\n\n".format(_clap_count, rank+1, ranking_list[rank][1], _clap_count, _score_symbol)
 				}
 			}
 		_view_blocks.append(_view_ranking)
@@ -71,7 +71,6 @@ def post_ranking(client, db, range):
 	_channel_id = db.get_channel_id(_workspace_id)	# TODO: _channel_id = db.チャンネルIDの取得(_workspace_id)
 	_ranking_list = db.read_score(_workspace_id,range)	# TODO: _ranking_list = db.ランキングリストの取得(_workspace_id, range = 3)
 	view_ranking_message(client, _channel_id, _ranking_list)
-	db.reset_score()
 
 # 複数ワークスペースに送る場合の関数(未実装)
 def all_ws_post_ranking(db):
@@ -83,18 +82,33 @@ def all_ws_post_ranking(db):
 
 # 毎月自動投稿する関数
 def post_permonth_ranking(client, db, range):
-	_day_to_seconds = 3600 * 24
-
-	schedule.every(1).day.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+	_date = datetime.datetime.now()				# 今の時間を格納
+	_expected_date = datetime.datetime.now()	# 来月の予定日を格納
+	schedule.every(1).seconds.do(post_ranking, client, db, range)
 	while True:
-		if datetime.datetime.now().day == 1:
-			schedule.run_pending()
-			time.sleep(_day_to_seconds)
+		# 来月のついたちの時間型を取得
+		if _date.month != 12:
+			_expected_date = datetime.datetime(
+				year = _date.year,
+				month = _date.month + 1,
+				day = 1
+			)
+		else:
+			_expected_date = datetime.datetime(
+				year = _date + 1,
+				month = 1,
+				day = 1
+			)
+		
+		# 来月までの時間を算出し，sleepする
+		_timedelta = _expected_date - _date
+		time.sleep(_timedelta.total_seconds()+1)
+		post_ranking(client, db, range)
+		_date = _expected_date	# 今月の時間型を更新
+		
 
-	""" デバッグ用毎分投稿 (使う時は上の schedule.every より下をコメントアウトしてね)
-	schedule.every(1).mitutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
+	"""デバッグ用毎分投稿 (使う時は関数の上の _date = より下をコメントアウトしてね)
+	schedule.every(1).minutes.do(post_ranking, client, db, range) # scheduleに毎月1回実行が無かったのでif文で毎日実行を制限
 	while True:
-		if datetime.datetime.now().day == 1:
-			schedule.run_pending()
-			time.sleep(1)
-		"""
+		schedule.run_pending()
+		time.sleep(1)"""

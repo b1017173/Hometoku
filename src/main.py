@@ -23,7 +23,7 @@ app = App(
 # データベースのインスタンス生成
 db = cm.Database()
 # デバッグ用
-# db.debug_db()
+db.debug_db()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")
@@ -142,7 +142,7 @@ def handle_homeru_submission(ack, say, body, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
-    
+    db.write_score(_workspace_id,_targets,_clap_num)
     sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
