@@ -14,7 +14,6 @@ import app_server.home as hm
 import app_server.send as sd
 import app_server.monthly_ranking as mr
 
-
 # Initializes your app with your bot token and signing secret
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -30,7 +29,9 @@ db = cm.Database()
 @app.event("app_home_opened")
 def send_help(client, event, logger):
     _user_id = event["user"]
-    hm.view_help_message(client, _user_id, logger)
+    _workspace_id = event["view"]["team_id"]
+    _channel_id = db.get_channel_id(_workspace_id)
+    hm.view_help_message(client, _user_id, _channel_id, logger)
 
 # ホームタブのチャンネル更新ボタンが押された時にモーダル表示
 @app.action("update_channel")
@@ -47,22 +48,22 @@ def dummy(ack):
 @app.view("modal_update_channel")
 def handle_update_channel_submission(ack, say, body, client, view, logger):
     ack()
-    # 入力されたチャンネルIDの取得
-    #ワークスペースIDが欲しい
+    
     _workspace_id = body["team"]["id"]
     _channel_id = view["state"]["values"]["selecter"]["select_channel"]["selected_conversation"]
     _user_id = body["user"]["id"]
-    if _channel_id == None:
+    if _channel_id == None: # 未入力で送信された場合は，何も処理しない
         return
-    print("channel id: ", _channel_id)
-    print("user id: ", _user_id)
+    print("workspace id: ", _workspace_id)
+    print("  channel id: ", _channel_id)
+    print("     user id: ", _user_id)
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    _joined_channel_id = db.get_channel_id(_workspace_id)
     if _joined_channel_id == "":
         uc.setup_channel(say, _workspace_id, _channel_id, client, db)
     else:
         uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
-    hm.view_help_message(client, _user_id, logger)
+    hm.view_help_message(client, _user_id, _channel_id, logger)
 
 # チャンネル登録のコマンドのリスナー
 @app.command("/hometoku_set_channel")
@@ -73,7 +74,7 @@ def get_channel_command(ack, say, command, client):
     _channel_id = command["channel_id"] # コマンドが呼ばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてチャンネル情報がすでにあるかを確認する
+    _joined_channel_id = db.get_channel_id(_workspace_id)
 
     if _joined_channel_id == "":
         uc.setup_channel(say, _workspace_id, _channel_id, client, db)
@@ -88,19 +89,25 @@ def get_update_channel_command(ack, say, command, client):
     _channel_id = command["channel_id"] # コマンドがよばれたチャンネルID用の変数
     _user_id = command["user_id"] # コマンドを呼び出した人のユーザーID用の変数
 
-    _joined_channel_id = "" # TODO: dbにアクセスしてすでに参加しているチャンネルがあればそれを返す
+    _joined_channel_id = db.get_channel_id(_workspace_id)
 
     if _joined_channel_id != _channel_id:  # 既に参加しているチャンネルIDとコマンドがよばれたチャンネルIDが不一致なら更新する
-        uc.update_channel(say, _channel_id, _joined_channel_id, client, db)
+        uc.update_channel(say, _workspace_id, _channel_id, _joined_channel_id, client, db)
     else:  # すでに参加しているチャンネルでコマンドがよばれた場合
-        uc.send_aleady_exist_message(_channel_id, _user_id, client)
+        uc.cant_setup_channel(_joined_channel_id, _user_id, client)
 
 # 'shortcut_homeru' という callback_id のショートカットをリッスン
 @app.shortcut("shortcut_homeru")
 def open_modal_homeru(ack, shortcut, client):
-    # リクエストを受け付け
     ack()
-    sc.view_modal_from_shortcut(client, shortcut)
+
+    # チャンネルの登録の有無に合わせたモーダル表示
+    _workspace_id = shortcut["team"]["id"]
+    _channel_id = db.get_channel_id(_workspace_id)
+    if _channel_id != "":
+        sc.view_modal_from_shortcut(client, shortcut)
+    else:
+        sc.view_modal_not_set_channel(client, shortcut)
 
 # 'prise_countup' アクションをリッスン(褒めたい度の更新)
 @app.action("prise_countup")
@@ -119,7 +126,7 @@ def debug_post_ranking():
 
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
-def handle_homeru_submission(ack, body, client, view, logger):
+def handle_homeru_submission(ack, say, body, view, logger):
     # リクエストを受け付け
     ack()
     _user = body["user"]["id"]                                                              # 投稿ユーザ
@@ -135,7 +142,8 @@ def handle_homeru_submission(ack, body, client, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
-
+    
+    sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
 if __name__ == "__main__":
