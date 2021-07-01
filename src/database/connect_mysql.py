@@ -114,8 +114,10 @@ class Database:
         _channel_id = ""
         self.open_db()
         self.cur.execute("SELECT channel_id FROM channels WHERE workspace_id = '{0}'".format(workspace_id))
-        _channel_id =  self.cur.fetchone()[0]
-        print("Get channel id: '{0}' from workspace id: '{1}'.".format(_channel_id, workspace_id))
+        _response = self.cur.fetchone()
+        if _response != None:
+            _channel_id =  _response[0]
+            print("Get channel id: '{0}' from workspace id: '{1}'.".format(_channel_id, workspace_id))
 
         self.close_db()
         return _channel_id
@@ -154,7 +156,7 @@ class Database:
 
 
     def debug_db(self):
-        _workspace_id = "WORKSPACEID"
+        _workspace_id ="WORKSPACEID"
         _channel_id = "CHANNELID"
         _channel_id_updated = "MEGACHANNELID"
         _user_ids = ["USER1", "USER2", "USER3"]
@@ -165,7 +167,6 @@ class Database:
 
         print("Debug: チャンネルIDの取得")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id)
-
         print("Debug: スコアの書き込み")
         print("- 対象人数: 3人 -")
         print("-- 1回目/clap:4 ---")
@@ -192,3 +193,9 @@ class Database:
 
         print("Debug: チャンネルIDの取得(チャンネル変更後)")
         print("正誤: ", self.get_channel_id(_workspace_id) == _channel_id_updated)
+
+        self.open_db()
+        self.cur.execute("DELETE FROM users")
+        self.cur.execute("DELETE FROM channels")
+        self.conn.commit()
+        self.close_db()
