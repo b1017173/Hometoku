@@ -4,8 +4,7 @@ class Database:
     def __init__(self):
         self.conn = mysql.connector.connect(
             host = "localhost",
-            port = "3306",
-            user = "root"
+            port = "3306"
         )
         
         self.open_db(True)
