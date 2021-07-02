@@ -3,25 +3,46 @@ import datetime
 import time
 
 def view_ranking_message(client, channel_id, ranking_list):
+	_view_blocks = "" # 最終的に出力されるjson
 	_dt_now = datetime.datetime.now()
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
-	_view_blocks = [
-		{
-			"type": "image",
-			"image_url": "https://cdn-ak.f.st-hatena.com/images/fotolife/s/sizimi0527/20210701/20210701201604.png",
-			"alt_text": "home_award"
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "plain_text",
-				"text": "{0}月にたくさんホメられたあなたを表彰します！".format(_dt_now.month-1)
+
+	if(_dt_now.month() != 1):
+		_view_blocks = [
+			{
+				"type": "image",
+				"image_url": "https://cdn-ak.f.st-hatena.com/images/fotolife/s/sizimi0527/20210701/20210701201604.png",
+				"alt_text": "home_award"
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "plain_text",
+					"text": "{0}月にたくさんホメられたあなたを表彰します！".format(_dt_now.month-1)
+				}
+			},
+			{
+				"type": "divider"
 			}
-		},
-		{
-			"type": "divider"
-		}
-	]
+		]
+	else:
+		_view_blocks = [
+			{
+				"type": "image",
+				"image_url": "https://cdn-ak.f.st-hatena.com/images/fotolife/s/sizimi0527/20210701/20210701201604.png",
+				"alt_text": "home_award"
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "plain_text",
+					"text": "12月にたくさんホメられたあなたを表彰します！"
+				}
+			},
+			{
+				"type": "divider"
+			}
+		]
 
 	# 感謝文作成
 	_view_thanks = [
@@ -80,7 +101,7 @@ def post_ranking(client, db, range):
 		print("channel is not setting")
 
 
-# 複数ワークスペースに送る場合の関数(未実装)
+# TODO 複数ワークスペースに送る場合の関数
 def all_ws_post_ranking(db):
 	_workspaces = []	# TODO: _workspaces = db.ワークスペースリストの取得()
 

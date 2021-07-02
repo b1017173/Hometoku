@@ -116,14 +116,6 @@ def countup_prise(ack, body, client):
     ack()
     sc.update_modal_from_countup(body, client)
 
-# デバッグ用
-@app.message("debug_post_ranking")
-def debug_post_ranking():
-    _client = app.client
-    mr.post_ranking(_client, db, 3)
-
-
-
 # 'homeru'モーダルを Submit したことをリッスン
 @app.view("modal_homeru")
 def handle_homeru_submission(ack, say, body, view, logger):
