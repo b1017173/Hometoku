@@ -4,10 +4,8 @@ import database.connect_mysql as cm
 import datetime
 import threading
 
-
 # Use the package we installed
 from slack_bolt import App
-from slack_sdk.web import client
 import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
@@ -23,7 +21,7 @@ app = App(
 # データベースのインスタンス生成
 db = cm.Database()
 # デバッグ用
-#db.debug_db()
+# db.debug_db()
 
 # アプリのDMを開いた時にヘルプを表示
 @app.event("app_home_opened")

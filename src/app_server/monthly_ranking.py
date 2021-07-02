@@ -6,8 +6,8 @@ def view_ranking_message(client, channel_id, ranking_list):
 	_view_blocks = "" # 最終的に出力されるjson
 	_dt_now = datetime.datetime.now()
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
-
-	if(_dt_now.month() != 1):
+	_twodiamond_symbol = ":diamond_shape_with_a_dot_inside:" * 2
+	if(_dt_now.month != 1):
 		_view_blocks = [
 			{
 				"type": "image",
@@ -46,6 +46,22 @@ def view_ranking_message(client, channel_id, ranking_list):
 
 	# 感謝文作成
 	_view_thanks = [
+			{
+				"type": "divider"
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": "{0}*感謝状*{0}\n\n*<@{1}>殿* \nあなたは1ヶ月間で最もチームのメンバーから活躍を認められました．\nその栄誉を讃えつつ， *ホメとくを利用する機会をくれたこと* に感謝の意を表します．\n       　　　     　　　　   　　　　　{2}月{3}日　チームカタンより\n{4}"\
+					.format(_twodiamond_symbol, ranking_list[0][1], _dt_now.month, _dt_now.day, _twodiamond_symbol * 3)
+			},
+			"accessory": {
+				"type": "image",
+				"image_url": "https://cdn-ak.f.st-hatena.com/images/fotolife/s/sizimi0527/20210702/20210702203617_120.jpg",
+				"alt_text": "hometoku"
+			}
+		},
 		{
 			"type": "divider"
 		},
@@ -69,7 +85,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "{0}*{1}位 <@{2}>*{3}\nホメられた回数 {4} ホメ\n\n".format(_clap_count, rank+1, ranking_list[rank][1], _clap_count, _score_symbol)
+					"text": "{0}{1}*{2}位*{1}\n<@{3}> ホメられ度 {4} \n\n".format("　 " * rank, _clap_count, rank+1, ranking_list[rank][1], _score_symbol)
 				}
 			}
 		_view_blocks.append(_view_ranking)
@@ -111,6 +127,8 @@ def all_ws_post_ranking(db):
 
 # 毎月自動投稿する関数
 def post_permonth_ranking(client, db, range):
+	# デバッグするときは_dateを今月最終日の23:59分に設定する
+	# _date = datetime.datetime(year, month, day, hour, minute)
 	_date = datetime.datetime.now()				# 今の時間を格納
 	_expected_date = datetime.datetime.now()	# 来月の予定日を格納
 	while True:
