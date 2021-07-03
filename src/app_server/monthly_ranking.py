@@ -4,6 +4,7 @@ import time
 
 # blocksを作成してチャットを投稿する関数
 def view_ranking_message(client, channel_id, ranking_list):
+	dt_now = datetime.datetime.now()
 	_view_blocks = "" # 最終的に出力されるmap
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
 	_homezero_block = { # 1ヶ月間誰もホメられていなかったときのブロック
@@ -14,7 +15,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 			}
 		}
 
-	if(datetime.month != 1):
+	if(dt_now.month != 1):
 		_view_blocks = [
 			{
 				"type": "image",
@@ -25,7 +26,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "plain_text",
-					"text": "{0}月にたくさんホメられたあなたを表彰します！".format(datetime.month-1)
+					"text": "{0}月にたくさんホメられたあなたを表彰します！".format(dt_now.month - 1)
 				}
 			},
 			{
@@ -70,34 +71,38 @@ def view_ranking_message(client, channel_id, ranking_list):
 					}
 				}
 			print("add_ranking : {0}, {1}, {2}".format(ranking_list[rank][0], ranking_list[rank][1], ranking_list[rank][2]))
-			_view_blocks.append(_view_ranking)
+	_view_blocks.append(_view_ranking)
 
 			
 
 
-	if len(_view_blocks) > 3: # 誰か1人でもランキングに入っていたら実行(bolcksの長さは3スタート)
-		for map in thanks_add(ranking_list) :
-			_view_blocks.append(map) # 最後に感謝文追加
-
+	 # 誰か1人でもランキングに入っていたら実行(bolcksの長さは3スタート)
+	if len(_view_blocks) <= 3:
+		_view_blocks.append(_homezero_block)
 		try:
 			client.chat_postMessage(
 				channel = channel_id,
 				blocks = _view_blocks,
-				text = "月間ランキングが投稿されました！"
-			)
-		except Exception as e:
-			print("Error: sending ranking message is Failed, {0}".format(e))
-
-	else :
-		_view_blocks.append(_homezero_block) # 誰もホメていない文章追加
-		client.chat_postMessage(
-				channel = channel_id,
-				blocks = _view_blocks,
 				text = "もしかして : ホメていない"
-			)
+				)
+		except Exception as e:
+			print("Error: sending home0 message is Failed, {0}".format(e))
+
+	else:
+			for map in thanks_add(ranking_list) :
+				_view_blocks.append(map) # 最後に感謝文追加
+			try:
+				client.chat_postMessage(
+					channel = channel_id,
+					blocks = _view_blocks,
+					text = "月間ランキングが投稿されました！"
+					)
+			except Exception as e:
+				print("Error: sending ranking message is Failed, {0}".format(e))
 
 # 感謝状のmapを返す関数
 def thanks_add (ranking_list):
+	dt_now = datetime.datetime.now()
 	return [
 			{
 				"type": "divider"
@@ -107,7 +112,7 @@ def thanks_add (ranking_list):
 				"text": {
 					"type": "mrkdwn",
 					"text": "{0}*感謝状*{0}\n\n*<@{1}>殿* \nあなたは1ヶ月間で最もチームのメンバーから活躍を認められました．\nその栄誉を讃えつつ， *ホメとくを利用する機会をくれたこと* に感謝の意を表します．\n       　　　     　　　　   　　　　　{2}月{3}日　ホメとく開発者より\n{4}"\
-					.format(":diamond_shape_with_a_dot_inside:" * 2, ranking_list[0][1], datetime.now.month, datetime.now.day, ":diamond_shape_with_a_dot_inside:" * 6)
+					.format(":diamond_shape_with_a_dot_inside:" * 2, ranking_list[0][1], dt_now.month, dt_now.day, ":diamond_shape_with_a_dot_inside:" * 6)
 			},
 			"accessory": {
 				"type": "image",
@@ -156,7 +161,8 @@ def all_ws_post_ranking(db):
 def post_permonth_ranking(client, db, range):
 	# デバッグするときは_dateを今月最終日の23:59分に設定する
 	# _date = datetime.datetime(year, month, day, hour, minute)
-	_date = datetime.datetime.now()				# 今の時間を格納
+	_date = datetime.datetime(2021, 7, 31, 23, 59)
+	#_date = datetime.datetime.now()				# 今の時間を格納
 	_expected_date = datetime.datetime.now()	# 来月の予定日を格納
 	while True:
 		# 来月のついたちの時間型を取得
