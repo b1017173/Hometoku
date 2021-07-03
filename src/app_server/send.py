@@ -1,4 +1,4 @@
-import app_server.positive_phrase as ph
+import app_server.random_contents as rc
 
 #  modalに入力された内容をSlackで表示させる
 def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num, db, logger):
@@ -24,7 +24,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 					"type": "section",
 					"text": {
 						"type": "mrkdwn",
-						"text": ph.random_positive(targets_id,praise_writing)
+						"text": rc.random_positive(targets_id,praise_writing)
 					}
 				},
 				{
@@ -68,8 +68,8 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 						"text": "homehome",
 						"emoji": True
 					},
-					"image_url": "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
-					"alt_text": "marg"
+					"image_url": rc.random_gif_url(),
+					"alt_text": "gif"
 				},
 				{
 					"type": "section",
@@ -79,7 +79,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clup_num,
 					}
 				}			
 			],
-			text = f":confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball:  ホメられ速報 :confetti_ball: :confetti_ball: :confetti_ball: :confetti_ball: " # 通知バナーの内容
+			text = f"ホメられ速報" # 通知バナーの内容
 		)
 	except Exception as e:
 		logger.error(f"Error posting praise message: {e}")
