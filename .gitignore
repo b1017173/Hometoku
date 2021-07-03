@@ -10,3 +10,7 @@
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+.vscode
+src/__pycache__
+src/app_server/__pycache__
+src/database/__pycache__
