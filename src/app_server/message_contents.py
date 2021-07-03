@@ -29,23 +29,6 @@ def random_positive(targets:list, prise_writing:str):
 
     return _positive_phrase_list[random.randrange(0,len(_positive_phrase_list))]
 
-# gifのURLをランダムで1つ返す
-def random_gif_url():
-    _gif_url_list = [
-        "https://tenor.com/view/shiba-shiny-shiba-doggo-good-doggo-shiny-doggo-gif-16082089",
-        "https://tenor.com/view/nanon-nanon-korapat-%e0%b8%99%e0%b8%99%e0%b8%99-%e0%b8%99%e0%b8%99%e0%b8%99%e0%b8%81%e0%b8%a3%e0%b8%a0%e0%b8%b1%e0%b8%97%e0%b8%a3%e0%b9%8c-hearts-gif-22124241",
-        "https://tenor.com/view/shinegifs-gif-8555546",
-        "https://tenor.com/view/kitty-highkitten-mdmacat-cat-happykitty-gif-6198981",
-        "https://tenor.com/view/shaq-buffalo-wings-hot-ones-shaquille-oneal-shocked-gif-13728541",
-        "https://tenor.com/view/dogs-cute-adorable-gif-13995631",
-        "https://tenor.com/view/spongebob-squarepants-dance-happydance-gif-5027512",
-        "https://tenor.com/view/my-happpy-dance-cute-shade-gif-15567340",
-        "https://tenor.com/view/dancing-dance-twerk-jump-street-gif-5840882",
-        "https://tenor.com/view/happy-mochi-gif-20079211",
-    ]
-
-    return _gif_url_list[random.randrange(0, len(_gif_url_list))]
-
 # ホメられた人のIDをstrで返す関数
 def get_targets_str(targets_id:str):
     _targets_str:str = ""
@@ -56,22 +39,21 @@ def get_targets_str(targets_id:str):
     return _targets_str
 
 # ホメられ度によってテキストとgifを返す関数
-def get_last_text(clap_num:int, targets_id:str):
+def get_clap_contents(clap_num:int, targets_id:str):
 	_targets_str = get_targets_str(targets_id)
-	_clap_num = clap_num
 	_last_text:str = ""
 	_gif_url:str = ""
 
-	if _clap_num < 2:
+	if clap_num < 2:
 		_last_text = "いいですね〜{0}\n\nその調子！！".format(_targets_str)
 		_gif_url = "https://tenor.com/view/shaq-buffalo-wings-hot-ones-shaquille-oneal-shocked-gif-13728541"
-	elif _clap_num < 5:
+	elif clap_num < 5:
 		_last_text = "素敵！:sparkles::sparkles:\n\n{0}は今日も輝いてる:sparkles::sparkles:\n\n眩しすぎて目が開けられないよ！:dizzy_face:".format(_targets_str)
 		_gif_url = "https://tenor.com/view/aplauso-superholly-buen-hecho-muy-bien-celebrar-gif-22174395"
-	elif _clap_num < 7:
+	elif clap_num < 7:
 		_last_text = "すごい！:hushed:\n\n{0}は絶好調だね:+1::+1:\n\nこの調子でどんどん進めていこう:muscle::muscle:".format(_targets_str)
 		_gif_url = "https://tenor.com/view/two-thumbs-up-bravo-nice-happy-smile-gif-8782543"
-	elif _clap_num < 9:
+	elif clap_num < 9:
 		_last_text = "最高のチームメンバーだ！！:clap::clap:\n\nこれは表彰ものだね！:clap::clap:"
 		_gif_url = "https://tenor.com/view/standing-ovation-applause-yes-gif-4982332"
 	else:
