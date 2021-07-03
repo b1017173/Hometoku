@@ -156,7 +156,7 @@ class Database:
 
 
     def debug_db(self):
-        _workspace_id ="WORKSPACEID"
+        _workspace_id = "WORKSPACEID"
         _channel_id = "CHANNELID"
         _channel_id_updated = "MEGACHANNELID"
         _user_ids = ["USER1", "USER2", "USER3"]

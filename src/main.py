@@ -140,4 +140,3 @@ if __name__ == "__main__":
     auto_post_ranking = threading.Thread(target=mr.post_permonth_ranking, args=(app.client, db, 3))
     auto_post_ranking.start()
     app.start(port=int(os.environ.get("PORT", 3000)))
-
