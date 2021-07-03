@@ -71,7 +71,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 					}
 				}
 			print("add_ranking : {0}, {1}, {2}".format(ranking_list[rank][0], ranking_list[rank][1], ranking_list[rank][2]))
-	_view_blocks.append(_view_ranking)
+			_view_blocks.append(_view_ranking)
 
 			
 
