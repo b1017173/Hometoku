@@ -44,20 +44,20 @@ def get_clap_contents(clap_num:int, targets_id:str):
 	_last_text:str = ""
 	_gif_url:str = ""
 
-	if clap_num < 2:
+	if clap_num < 3:
 		_last_text = "いいですね〜{0}\n\nその調子！！".format(_targets_str)
-		_gif_url = "https://tenor.com/view/shaq-buffalo-wings-hot-ones-shaquille-oneal-shocked-gif-13728541"
+		_gif_url = "https://media.giphy.com/media/iziZJkVonHMMKElQTt/giphy.gif"
 	elif clap_num < 5:
-		_last_text = "素敵！:sparkles::sparkles:\n\n{0}は今日も輝いてる:sparkles::sparkles:\n\n眩しすぎて目が開けられないよ！:dizzy_face:".format(_targets_str)
-		_gif_url = "https://tenor.com/view/aplauso-superholly-buen-hecho-muy-bien-celebrar-gif-22174395"
+		_last_text = "さすがだなぁ〜\n\nそんな{0}にグッジョブ:+1::+1:".format(_targets_str)
+		_gif_url = "https://media.giphy.com/media/xUSVThgS8BzMSE3ZjQ/giphy.gif"
 	elif clap_num < 7:
-		_last_text = "すごい！:hushed:\n\n{0}は絶好調だね:+1::+1:\n\nこの調子でどんどん進めていこう:muscle::muscle:".format(_targets_str)
-		_gif_url = "https://tenor.com/view/two-thumbs-up-bravo-nice-happy-smile-gif-8782543"
+		_last_text = "すごい！:hushed:\n\n{0}は絶好調だね:+1::+1:\n\nこのホメ合いがまた一つ団結力を強くしたね:muscle::muscle:".format(_targets_str)
+		_gif_url = "https://media.giphy.com/media/fbonqRT3Bv53VfZVaH/giphy.gif"
 	elif clap_num < 9:
-		_last_text = "最高のチームメンバーだ！！:clap::clap:\n\nこれは表彰ものだね！:clap::clap:"
-		_gif_url = "https://tenor.com/view/standing-ovation-applause-yes-gif-4982332"
+		_last_text = "最高のチームメンバーだ！！:clap::clap:\n\nあふれるホメたい度にチームも大盛り上がり！！:arrow_heading_up::arrow_heading_up:"
+		_gif_url = "https://media.giphy.com/media/VrBF7FxUC8ZVSeJPOH/giphy.gif"
 	else:
-		_last_text = "これはとんでもなく褒められてますよ:bangbang::bangbang:\n\n過去1かもしれません:bangbang::bangbang:\n\n{0}はみんなの誇りだね:bangbang:".format(_targets_str)
-		_gif_url = "https://tenor.com/view/surprise-chris-pratt-parks-and-recreation-parks-and-rec-shocked-gif-5571450"
+		_last_text = "これはとんでもなく褒められてますよ:bangbang::bangbang:\n\n過去1のホメたい度かもしれません:bangbang::bangbang:\n\n{0}はみんなの誇りだね:bangbang:".format(_targets_str)
+		_gif_url = "https://media.giphy.com/media/LADGQ3DIlxW0cSBg1R/giphy.gif"
 
 	return _last_text, _gif_url
