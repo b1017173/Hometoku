@@ -46,6 +46,7 @@ def random_gif_url():
 
     return _gif_url_list[random.randrange(0, len(_gif_url_list))]
 
+# ホメられた人のIDをstrで返す関数
 def get_targets_str(targets_id:str):
     _targets_str:str = ""
     

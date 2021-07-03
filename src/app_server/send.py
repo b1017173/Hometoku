@@ -1,9 +1,9 @@
-import app_server.random_contents as rc
+import app_server.message_contents as mc
 
 #  modalに入力された内容をSlackで表示させる
 def view_praise_message(say, workspace_id, targets_id, praise_writing, clap_num, db, logger):
 	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
-	_result = rc.get_last_text(clap_num, targets_id)
+	_result = mc.get_last_text(clap_num, targets_id)
 
 	try:
 		say(
@@ -23,7 +23,7 @@ def view_praise_message(say, workspace_id, targets_id, praise_writing, clap_num,
 					"type": "section",
 					"text": {
 						"type": "mrkdwn",
-						"text": rc.random_positive(targets_id, praise_writing)
+						"text": mc.random_positive(targets_id, praise_writing)
 					}
 				},
 				{
