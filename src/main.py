@@ -1,7 +1,8 @@
 import os
 import datetime
-
 import database.connect_mysql as cm
+import datetime
+import threading
 
 # Use the package we installed
 from slack_bolt import App
@@ -9,9 +10,9 @@ import app_server.shortcut as sc
 import app_server.update_channel as uc
 import app_server.home as hm
 import app_server.send as sd
+import app_server.monthly_ranking as mr
 
 # Initializes your app with your bot token and signing secret
-
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
@@ -131,9 +132,12 @@ def handle_homeru_submission(ack, say, body, view, logger):
     print("workspace id: ", _workspace_id)
     print("clap num: ", _clap_num)
     print("timestamp: ", _timestamp)
-    
+    db.write_score(_workspace_id,_targets,_clap_num)
     sd.view_praise_message(say, _workspace_id, _targets, _prise_writing, _clap_num, db, logger) # modalに入力された内容をSlackで表示させる
 
 # Start your app
 if __name__ == "__main__":
+    auto_post_ranking = threading.Thread(target=mr.post_permonth_ranking, args=(app.client, db, 3))
+    auto_post_ranking.start()
     app.start(port=int(os.environ.get("PORT", 3000)))
+
