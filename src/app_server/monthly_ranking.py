@@ -2,12 +2,19 @@
 import datetime
 import time
 
+# blocksを作成してチャットを投稿する関数
 def view_ranking_message(client, channel_id, ranking_list):
-	_view_blocks = "" # 最終的に出力されるjson
-	_dt_now = datetime.datetime.now()
+	_view_blocks = "" # 最終的に出力されるmap
 	_int_to_english = ["zero","one","two","three","four","five","six","seven","eight","nine"] # 添字の数字を英語に変える
-	_twodiamond_symbol = ":diamond_shape_with_a_dot_inside:" * 2
-	if(_dt_now.month != 1):
+	_homezero_block = { # 1ヶ月間誰もホメられていなかったときのブロック
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*って誰もホメてないやないかーい！ホメるって...いいもの...なんやで？*"
+			}
+		}
+
+	if(datetime.month != 1):
 		_view_blocks = [
 			{
 				"type": "image",
@@ -18,7 +25,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "plain_text",
-					"text": "{0}月にたくさんホメられたあなたを表彰します！".format(_dt_now.month-1)
+					"text": "{0}月にたくさんホメられたあなたを表彰します！".format(datetime.month-1)
 				}
 			},
 			{
@@ -44,8 +51,54 @@ def view_ranking_message(client, channel_id, ranking_list):
 			}
 		]
 
-	# 感謝文作成
-	_view_thanks = [
+
+
+	for rank in range(len(ranking_list)):
+		# viewに付け足されるランキング(最大1位2位3位の3回増やす)
+		if ranking_list[rank][2] != 0: # 褒められ度が0なら追加しない
+			_clap_count = ":clap:" * (3 - rank)
+			_score_symbol_list = list(str(ranking_list[rank][2]))#桁ごとに分離して配列に格納
+			_score_symbol = ""
+			for digit in _score_symbol_list:
+				_score_symbol += ":{0}:".format(_int_to_english[int(digit)])
+
+			_view_ranking =  {
+					"type": "section",
+					"text": {
+					"type": "mrkdwn",
+					"text": "{0}{1}*{2}位*{1}\n<@{3}> ホメられ度 {4} \n\n".format("　 " * rank, _clap_count, rank+1, ranking_list[rank][1], _score_symbol)
+					}
+				}
+			print("add_ranking : {0}, {1}, {2}".format(ranking_list[rank][0], ranking_list[rank][1], ranking_list[rank][2]))
+			_view_blocks.append(_view_ranking)
+
+			
+
+
+	if len(_view_blocks) > 3: # 誰か1人でもランキングに入っていたら実行(bolcksの長さは3スタート)
+		for map in thanks_add(ranking_list) :
+			_view_blocks.append(map) # 最後に感謝文追加
+
+		try:
+			client.chat_postMessage(
+				channel = channel_id,
+				blocks = _view_blocks,
+				text = "月間ランキングが投稿されました！"
+			)
+		except Exception as e:
+			print("Error: sending ranking message is Failed, {0}".format(e))
+
+	else :
+		_view_blocks.append(_homezero_block) # 誰もホメていない文章追加
+		client.chat_postMessage(
+				channel = channel_id,
+				blocks = _view_blocks,
+				text = "もしかして : ホメていない"
+			)
+
+# 感謝状のmapを返す関数
+def thanks_add (ranking_list):
+	return [
 			{
 				"type": "divider"
 			},
@@ -53,8 +106,8 @@ def view_ranking_message(client, channel_id, ranking_list):
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "{0}*感謝状*{0}\n\n*<@{1}>殿* \nあなたは1ヶ月間で最もチームのメンバーから活躍を認められました．\nその栄誉を讃えつつ， *ホメとくを利用する機会をくれたこと* に感謝の意を表します．\n       　　　     　　　　   　　　　　{2}月{3}日　チームカタンより\n{4}"\
-					.format(_twodiamond_symbol, ranking_list[0][1], _dt_now.month, _dt_now.day, _twodiamond_symbol * 3)
+					"text": "{0}*感謝状*{0}\n\n*<@{1}>殿* \nあなたは1ヶ月間で最もチームのメンバーから活躍を認められました．\nその栄誉を讃えつつ， *ホメとくを利用する機会をくれたこと* に感謝の意を表します．\n       　　　     　　　　   　　　　　{2}月{3}日　ホメとく開発者より\n{4}"\
+					.format(":diamond_shape_with_a_dot_inside:" * 2, ranking_list[0][1], datetime.now.month, datetime.now.day, ":diamond_shape_with_a_dot_inside:" * 6)
 			},
 			"accessory": {
 				"type": "image",
@@ -74,34 +127,7 @@ def view_ranking_message(client, channel_id, ranking_list):
 		}
 	]
 
-	for rank in range(len(ranking_list)):
-		# viewに付け足されるランキング(最大1位2位3位の3回増やす)
-		_clap_count = ":clap:" * (3 - rank)
-		_score_symbol_list = list(str(ranking_list[rank][2]))#桁ごとに分離して配列に格納
-		_score_symbol = ""
-		for digit in _score_symbol_list:
-			_score_symbol += ":{0}:".format(_int_to_english[int(digit)])
-		_view_ranking =  {
-				"type": "section",
-				"text": {
-					"type": "mrkdwn",
-					"text": "{0}{1}*{2}位*{1}\n<@{3}> ホメられ度 {4} \n\n".format("　 " * rank, _clap_count, rank+1, ranking_list[rank][1], _score_symbol)
-				}
-			}
-		_view_blocks.append(_view_ranking)
-
-	for map in _view_thanks :
-		_view_blocks.append(map) # 最後に感謝文追加
-
-	try:
-		client.chat_postMessage(
-			channel = channel_id,
-			blocks = _view_blocks,
-			text = "月間ランキングが投稿されました！"
-		)
-	except Exception as e:
-		print("Error: sending ranking message is Failed, {0}".format(e))
-
+# view_ranking_messageの投稿先IDをDBから引っ張ってチャンネルに投稿する関数
 def post_ranking(client, db, range):
 	_channel_id = ""
 
@@ -116,7 +142,7 @@ def post_ranking(client, db, range):
 	else:
 		print("channel is not setting")
 
-
+"""
 # TODO 複数ワークスペースに送る場合の関数
 def all_ws_post_ranking(db):
 	_workspaces = []	# TODO: _workspaces = db.ワークスペースリストの取得()
@@ -124,6 +150,7 @@ def all_ws_post_ranking(db):
 	for workspace in _workspaces:
 		_client = ""
 		post_ranking(_client, db)
+		"""
 
 # 毎月自動投稿する関数
 def post_permonth_ranking(client, db, range):
