@@ -3,7 +3,7 @@ import app_server.message_contents as mc
 #  modalに入力された内容をSlackで表示させる
 def view_praise_message(say, workspace_id, targets_id, praise_writing, clap_num, db, logger):
 	_channel_id = db.get_channel_id(workspace_id)  # botが参加しているチャンネルIDをDBから取得
-	_result = mc.get_clap_contents(clap_num, targets_id)
+	_result = mc.get_clap_contents(clap_num, targets_id) # 褒められ度によって変わるテキストとgifのURLを取得
 
 	try:
 		say(
