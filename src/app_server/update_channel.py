@@ -9,7 +9,7 @@ def success_join_channel():
 			},
 			"accessory": {
 				"type": "image",
-				"image_url": "https://media.giphy.com/media/cnuS67F8IoVTYRvJXE/giphy.gif",
+				"image_url": "https://media.giphy.com/media/1SVAZ0B0G88KC7lMHM/giphy.gif",
 				"alt_text": "success!!!"
 			}
 		},
