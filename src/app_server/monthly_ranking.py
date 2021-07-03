@@ -161,8 +161,7 @@ def all_ws_post_ranking(db):
 def post_permonth_ranking(client, db, range):
 	# デバッグするときは_dateを今月最終日の23:59分に設定する
 	# _date = datetime.datetime(year, month, day, hour, minute)
-	_date = datetime.datetime(2021, 7, 31, 23, 59)
-	#_date = datetime.datetime.now()				# 今の時間を格納
+	_date = datetime.datetime.now()				# 今の時間を格納
 	_expected_date = datetime.datetime.now()	# 来月の予定日を格納
 	while True:
 		# 来月のついたちの時間型を取得
