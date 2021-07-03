@@ -4,7 +4,7 @@ def view_modal(clap:str):
         "callback_id": "modal_homeru",
         "title": {
             "type": "plain_text",
-            "text": "Hometoku",
+            "text": "ホメる！",
             "emoji": True
         },
         "submit": {
