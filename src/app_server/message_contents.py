@@ -4,7 +4,7 @@ import random
 def random_positive(targets:list, praise_writing:str):
     _targets:str = get_targets_str(targets)
     _praise_writing = praise_writing
-    _conversion_praise_writing = "* \n*".join(_praise_writing.splitlines()) # 改行があった場合 * を前後に追加(太文字にするため)
+    _conversion_praise_writing = "*\n*".join(_praise_writing.splitlines()) # 改行があった場合 * を前後に追加(太文字にするため)
     _fix_praise_writing = _conversion_praise_writing.replace("**","") # 空行があった場合 ** を削除
   
     _positive_phrase_list = [
